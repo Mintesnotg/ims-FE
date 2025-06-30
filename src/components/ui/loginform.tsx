@@ -18,22 +18,18 @@ export default function Loginform({ action, }: {
 
     const onSubmit = async (values: LoginFormValues) => {
       
-      
-      if (typeof window !== 'undefined') {
+              debugger;
 
-          debugger
-            console.log('BASE_URL from env:', process.env.NEXT_PUBLIC_API_BASE_URL);
-
-           console.log('Endpoint from env:', USER_ACCOUNT_ENDPOINTS.Login);
-
-        }
 
         const res = await action(Object.entries(values).reduce((fd, [k, v]) => {
+
             fd.append(k, v);
             return fd;
-        }, new FormData()));
 
+        }, new FormData()));
+         console.log("response object result" + res )
         if (res?.error) setError('root', { message: res.error });
+                debugger;
 
     };
 
