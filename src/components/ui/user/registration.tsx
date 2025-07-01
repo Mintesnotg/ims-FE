@@ -5,6 +5,10 @@ import { useForm } from 'react-hook-form';
 import { registerSchema, RegisterValues } from '../../../../lib/schemas/useraccount/registration';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { RegisterResponse } from 'types/response/userresponse/registerresponse';
+import { Toaster, toast } from 'react-hot-toast';
+// import { ToastContainer, toast } from 'react-toastify';
+// import 'react-toastify/dist/ReactToastify.css';
+
 type RegisterFormProps = {
     action: (fd: FormData) => Promise<{ response?: RegisterResponse | undefined }>;
 };
@@ -13,19 +17,37 @@ const Registration = ({action}:RegisterFormProps) => {
     const {
         register,
         handleSubmit,
+        reset,
         formState: { errors, isSubmitting },
-    } = useForm<RegisterValues>({ resolver: zodResolver(registerSchema) });
+    } = useForm<RegisterValues>({ resolver: zodResolver(registerSchema),
+        defaultValues: {
+            firstName: "",
+            lastName: "",
+            email: "",
+            password: "",
+            confirmPassword: "",
+        },
+     });
 
     const onSubmit = async (values: RegisterValues) => {
-
+     debugger;
         const formData = new FormData();
         Object.entries(values).forEach(([key, value]) => formData.append(key, value as string));
-        await action(formData);
+        const  { response } = await action(formData);
+        debugger;
+        if (!response?.isSuccess) {
+            debugger;
+            
+            // alert(`${response?.message}`)
+            toast.error(`${response?.message}`);
+            reset()
+        }
     };
     return (
-        <div className='mt-15 sm:mx-auto sm:w-full sm:max-w-lg'>
-                    <h2 className="mt-5 text-center text-xl/9 font-bold tracking-tight text-gray-900">Register</h2>
 
+        <div className='mt-15 sm:mx-auto sm:w-full sm:max-w-lg'>
+            <h2 className="mt-5 text-center text-xl/9 font-bold tracking-tight text-gray-900">Register</h2>
+            <Toaster />
             <form
                 onSubmit={handleSubmit(onSubmit)}
                 className="space-y-6 rounded-2xl bg-white p-8 shadow-lg sm:max-w  w-full"

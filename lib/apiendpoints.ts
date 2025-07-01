@@ -5,5 +5,4 @@ export const USER_ACCOUNT_ENDPOINTS = {
     Login: `${BASE_URL}/api/v1/UserAccout/Login`,
     Register: `${BASE_URL}/api/v1/UserAccout/Register`
 
-
 }
