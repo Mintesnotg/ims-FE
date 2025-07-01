@@ -1,22 +1,20 @@
 
+import { LoginResponse } from "types/response/loginresponse";
 import { USER_ACCOUNT_ENDPOINTS } from "../../lib/apiendpoints";
+import { LoginFormValues } from "../../lib/schemas/useraccount/loginschema";
 
 
-export async function authenticate(formdata: FormData) {
-debugger
-    const username = formdata.get('username') as string;
-    const password = formdata.get('password') as string;
-  console.log(USER_ACCOUNT_ENDPOINTS.Login);
-    debugger;
-    const ok = await fetch(USER_ACCOUNT_ENDPOINTS.Login, {
+export async function authenticate(formdata: LoginFormValues): Promise<LoginResponse> {
+debugger;
+
+    const result = await fetch(USER_ACCOUNT_ENDPOINTS.Login, {
         method: 'POST',
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify(formdata),
         headers: { 'Content-Type': 'application/json' },
         cache: 'no-store',
     })
-
-    if (!ok) return false;
-    else return ok;
+  const data = (await result.json()) as LoginResponse;
+  return data;
 
 
 

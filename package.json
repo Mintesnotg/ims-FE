@@ -6,9 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "dev:debug": "cross-env NODE_OPTIONS='--inspect=9229' next dev"
+
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.1.1",
     "jose": "^6.0.11",
     "next": "15.3.3",
     "react": "^19.0.0",
