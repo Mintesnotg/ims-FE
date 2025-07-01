@@ -2,9 +2,9 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import { LoginFormValues, loginSchema } from "../../../lib/schemas/useraccount/loginschema";
+import { LoginFormValues, loginSchema } from "../../../../lib/schemas/useraccount/loginschema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { LoginResponse } from "types/response/loginresponse";
+import { LoginResponse } from "types/response/userresponse/loginresponse";
 import { useState } from "react";
 type Props = {
     action: (fd: FormData) => Promise<{ response?: LoginResponse  | undefined }>;
@@ -16,7 +16,6 @@ export default function Loginform({ action, }: Props) {
         register,
         handleSubmit,
         formState: { errors, isSubmitting },
-
     } = useForm<LoginFormValues>({resolver:zodResolver(loginSchema)});
     const [loginerror, setLoginError] = useState("")
     const onSubmit = async (values: LoginFormValues) => {
@@ -41,11 +40,11 @@ export default function Loginform({ action, }: Props) {
     return (
 
 
-        <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+        <div className="mt-5 sm:mx-auto sm:w-full sm:max-w-sm">
 
-            <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">Sign in to your account</h2>
-               
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 rounded-2xl bg-white p-8 shadow-lg max-w-md w-full">
+                <h2 className="mt-5 text-center text-xl/9 font-bold tracking-tight text-gray-900">Sign in to your account</h2>
+
                 <label className="block">
                     <span className="text-sm font-medium">Username</span>
                     <input onKeyDown={()=> setLoginError('')}

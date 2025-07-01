@@ -1,11 +1,11 @@
 import React from 'react'
 import { Metadata } from 'next';
-import Loginform from 'components/ui/loginform';    
+import Loginform from 'components/ui/user/loginform';    
 import { redirect } from 'next/navigation';
 import { authenticate } from 'services/auth';
-import { USER_ACCOUNT_ENDPOINTS } from '../../../lib/apiendpoints';
+
 import { LoginFormValues } from '../../../lib/schemas/useraccount/loginschema';
-import { LoginResponse } from 'types/response/loginresponse';
+import { LoginResponse } from 'types/response/userresponse/loginresponse';
 import { cookies } from 'next/headers';
 
 export const metadata: Metadata = { title: 'Sign in' };
