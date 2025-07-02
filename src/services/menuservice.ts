@@ -38,9 +38,9 @@ export async function getSideMenus(): Promise<MenuItem[]> {
     });
 
     if (!res.ok) {
-        throw new Error(`Failed to load menus: ${res.status} ${res.statusText}`);
+        throw new Error(`Failed to load menus: ${res.status} ${res.status}`);
     }
-
+        debugger;
     const json = await res.json();                         // <‑‑ full payload you pasted
     const root = json.data?.$values?.[0];                  // "ROOT" node
     return root?.children?.$values?.map(mapNode) ?? [];
