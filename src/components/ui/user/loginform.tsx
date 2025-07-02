@@ -6,12 +6,14 @@ import { LoginFormValues, loginSchema } from "../../../../lib/schemas/useraccoun
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginResponse } from "types/response/userresponse/loginresponse";
 import { useState } from "react";
+import Link from "next/link";
 type Props = {
     action: (fd: FormData) => Promise<{ response?: LoginResponse  | undefined }>;
 };
 
 export default function Loginform({ action, }: Props) {
  
+        const arrow = `->`
     const {
         register,
         handleSubmit,
@@ -43,7 +45,7 @@ export default function Loginform({ action, }: Props) {
         <div className="mt-5 sm:mx-auto sm:w-full sm:max-w-sm">
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 rounded-2xl bg-white p-8 shadow-lg max-w-md w-full">
-                <h2 className="mt-5 text-center text-xl/9 font-bold tracking-tight text-gray-900">Sign in to your account</h2>
+                    <h2 className="mt-5 text-center text-xl/9 font-bold tracking-tight text-gray-900">Sign in to your account</h2>
 
                 <label className="block">
                     <span className="text-sm font-medium">Username</span>
@@ -78,6 +80,11 @@ export default function Loginform({ action, }: Props) {
                         {loginerror}
                     </p>
                 )}
+                <div>
+                    <p className="text-center font-light">You don't have account  ?         <Link href="/register" className="text-gray-800  font-medium hover:text-blue-500" > Register {arrow}  </Link></p>
+          
+
+                </div>
                 <button
                     disabled={isSubmitting}
                     className="mt- w-full rounded bg-blue-600 py-2 font-medium text-white hover:bg-blue-700 disabled:opacity-50"

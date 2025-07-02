@@ -6,6 +6,7 @@ import { registerSchema, RegisterValues } from '../../../../lib/schemas/useracco
 import { zodResolver } from '@hookform/resolvers/zod';
 import { RegisterResponse } from 'types/response/userresponse/registerresponse';
 import { Toaster, toast } from 'react-hot-toast';
+import Link from 'next/link';
 // import { ToastContainer, toast } from 'react-toastify';
 // import 'react-toastify/dist/ReactToastify.css';
 
@@ -13,7 +14,7 @@ type RegisterFormProps = {
     action: (fd: FormData) => Promise<{ response?: RegisterResponse | undefined }>;
 };
 const Registration = ({action}:RegisterFormProps) => {
-
+        const arrow = `<-`
     const {
         register,
         handleSubmit,
@@ -110,6 +111,7 @@ const Registration = ({action}:RegisterFormProps) => {
                         )}
                     </div>
                 </div>
+                    <p className="text-center font-light">Back to   <Link href="/login" className="text-gray-800  font-medium hover:text-blue-500" >  Login  </Link></p>
 
                 <button
                     type="submit"

@@ -9,6 +9,5 @@ export const USER_ACCOUNT_ENDPOINTS = {
 }
 
 export const MENU_ENDPOINTS ={
-
     Menus : `${BASE_URL}/api/MenuBuilder/Menus`
 }
