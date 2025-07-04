@@ -12,7 +12,6 @@ export const metadata: Metadata = { title: 'Sign in' };
 
 const Login = () => {
  
-    
     async function loginaction(formdata: FormData): Promise<{ response: LoginResponse }> {
         'use server';
 
@@ -27,7 +26,7 @@ const Login = () => {
             });
             redirect('/dashboard');             // never reaches next line
         }
-        debugger;
+
         return { response: result };              // <‑‑ wrapped
     }
 

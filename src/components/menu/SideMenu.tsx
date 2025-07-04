@@ -45,7 +45,7 @@ export default function SideMenu({ items }: SideMenuProps) {
 
       {/* Sidebar */}
       <nav
-        className={`fixed left-0 top-0 z-20 flex h-full flex-col overflow-y-auto  bg-gray-100 transition-all duration-200 md:relative md:z-auto ${
+        className={`fixed  inset-y-0  z-10 flex flex-col  bg-gray-200 transition-all duration-200 ${
           open ? "w-64" : "w-16 md:w-16"
         } ${
           /* On mobile completely hide when closed */
@@ -99,7 +99,7 @@ function MenuNode({
         {/* Show label only when sidebar is expanded */}
         {expanded && (
           item.url ? (
-            <Link href={`/${item.url}`} className="flex-1 font-light">
+            <Link href={`${item.url}`} className="flex-1 font-light">
               {item.name}
             </Link>
           ) : (

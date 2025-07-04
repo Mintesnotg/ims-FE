@@ -1,12 +1,8 @@
 'use client'
+export default function Posts({ posts }: { posts: { id: string, name: string, email: string }[] }) {
 
-import { use } from "react"
-
-
-export default function Posts({ posts }: { posts: { id: string, name: string ,email :string }[]}) {
-
-
-    const allposts =  posts;
+    debugger;
+    const allposts = posts;
     return (
         <div>
             {allposts.map(p => (

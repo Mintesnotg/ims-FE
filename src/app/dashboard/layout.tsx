@@ -8,7 +8,6 @@ import Logout from 'components/ui/user/logout';
 export default async function DashboardLayout({ children }: { children: ReactNode }) {
 
   const menu = await getSideMenus();
-
   return (
 
 
@@ -16,7 +15,7 @@ export default async function DashboardLayout({ children }: { children: ReactNod
  
       <SideMenu items={menu} />
       <main className="flex-1 p-6">{children}</main>
-            <Logout/>
+      <Logout />
     </div>
 
   );
