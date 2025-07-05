@@ -1,6 +1,5 @@
 // app/dashboard/layout.tsx
 import { ReactNode } from 'react';
-import Link from 'next/link';
 import { getSideMenus } from 'services/menuservice';
 import SideMenu from 'components/menu/SideMenu';
 import Logout from 'components/ui/user/logout';

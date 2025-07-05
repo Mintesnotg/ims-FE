@@ -14,5 +14,7 @@ export function isExpired(token: string): boolean {
     debugger;
   const payload = decodePayload<{ exp?: number }>(token)
   // exp is in seconds since Unix epoch
-  return !payload?.exp || payload.exp * 1000 < Date.now()
+  var result= !payload?.exp || payload.exp * 1000 < Date.now()
+  console.log(` is the token expired :-  ${result}`)
+  return result;
 }

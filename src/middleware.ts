@@ -1,17 +1,17 @@
 // middleware.ts
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { isExpired } from './lib/helper/jwt';
+import { isExpired } from '../lib/helper/jwt';
+import { cookies } from 'next/headers';
 
 
 export async function middleware(request: NextRequest) {
-  // Get the token from cookies
-  const token = request.cookies.get('accessToken')?.value;
+ 
+  const token = (await cookies()).get("accessToken")?.value;
 
-  // Define paths that don't require authentication
+
   const publicPaths = ['/login', '/register']; // Adjust as needed
 
-  // If the request is to a public path, allow it
   if (publicPaths.includes(request.nextUrl.pathname)) {
     return NextResponse.next();
   }
@@ -31,6 +31,6 @@ export async function middleware(request: NextRequest) {
 // Specify which paths the middleware should apply to
 export const config = {
   matcher: [
-    '/((?!_next|api/auth).*)', // Apply to all routes except _next and auth APIs
+    '/((?!_next|api/auth).*)', // Applys to all routes except _next and auth APIs
   ],
 };
