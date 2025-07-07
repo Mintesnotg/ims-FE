@@ -40,58 +40,64 @@ export default function Loginform({ action, }: Props) {
 
 
     return (
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-200 py-8 px-4">
+            <div className="w-full max-w-md mx-auto">
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 rounded-3xl bg-white/90 p-10 shadow-2xl border border-blue-100 backdrop-blur-md">
+                    <h2 className="mb-6 text-center text-2xl font-extrabold tracking-tight text-blue-800 drop-shadow-sm">Sign in to your account</h2>
 
+                    <label className="block">
+                        <span className="text-sm font-semibold text-blue-700">Username</span>
+                        <input
+                            onKeyDown={() => setLoginError('')}
+                            {...register('email')}
+                            className="mt-1 w-full rounded-lg border border-blue-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all shadow-sm bg-blue-50 placeholder:text-blue-300"
+                            placeholder="Enter your email"
+                        />
+                        {errors.email && (
+                            <p className="text-xs text-red-600 mt-1">{errors.email.message}</p>
+                        )}
+                    </label>
 
-        <div className="mt-5 sm:mx-auto sm:w-full sm:max-w-sm">
+                    <label className="block">
+                        <span className="text-sm font-semibold text-blue-700">Password</span>
+                        <input
+                            onKeyDown={() => setLoginError('')}
+                            type="password"
+                            {...register('password')}
+                            className="mt-1 w-full rounded-lg border border-blue-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all shadow-sm bg-blue-50 placeholder:text-blue-300"
+                            placeholder="Enter your password"
+                        />
+                        {errors.password && (
+                            <p className="text-xs text-red-600 mt-1">{errors.password.message}</p>
+                        )}
+                    </label>
 
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 rounded-2xl bg-white p-8 shadow-lg max-w-md w-full">
-                    <h2 className="mt-5 text-center text-xl/9 font-bold tracking-tight text-gray-900">Sign in to your account</h2>
-
-                <label className="block">
-                    <span className="text-sm font-medium">Username</span>
-                    <input onKeyDown={()=> setLoginError('')}
-                        {...register('email')}
-                        className="mt-1 w-full rounded border px-3 py-2"
-                    />
-                    {errors.email && (
-                        <p className="text-xs text-red-600">{errors.email.message}</p>
+                    {errors.root && (
+                        <p className="mt-2 text-center text-sm text-red-600">
+                            {errors.root.message}
+                        </p>
                     )}
-                </label>
 
-                <label className="mt-4 block">
-                    <span className="text-sm font-medium">Password</span>
-                    <input onKeyDown={()=> setLoginError('')}
-                        type="password"
-                        {...register('password')}
-                        className="mt-1 w-full rounded border px-3 py-2"
-                    />
-                    {errors.password && (
-                        <p className="text-xs text-red-600">{errors.password.message}</p>
+                    {loginerror && (
+                        <p className="mt-2 text-center text-sm text-red-600">
+                            {loginerror}
+                        </p>
                     )}
-                </label>
-                {errors.root && (
-                    <p className="mt-4 text-center text-sm text-red-600">
-                        {errors.root.message}
-                    </p>
-                )}
 
-                {loginerror && (
-                    <p className="mt-4 text-center text-sm text-red-600">
-                        {loginerror}
-                    </p>
-                )}
-                <div>
-                    <p className="text-center font-light">You don't have account  ?         <Link href="/register" className="text-gray-800  font-medium hover:text-blue-500" > Register {arrow}  </Link></p>
-          
+                    <button
+                        disabled={isSubmitting}
+                        className="w-full rounded-lg bg-blue-600 py-2 font-semibold text-white shadow-md hover:bg-blue-700 transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed mt-2"
+                    >
+                        {isSubmitting ? 'Signing in…' : 'Sign in'}
+                    </button>
 
-                </div>
-                <button
-                    disabled={isSubmitting}
-                    className="mt- w-full rounded bg-blue-600 py-2 font-medium text-white hover:bg-blue-700 disabled:opacity-50"
-                >
-                    {isSubmitting ? 'Signing in…' : 'Sign in'}
-                </button>           
-                 </form>
+                    <div className="pt-4">
+                        <p className="text-center font-light text-blue-700">Don't have an account?{' '}
+                            <Link href="/register" className="text-blue-800 font-medium hover:text-blue-500 underline underline-offset-2 transition-colors">Register {arrow}</Link>
+                        </p>
+                    </div>
+                </form>
+            </div>
         </div>
     )
 }
