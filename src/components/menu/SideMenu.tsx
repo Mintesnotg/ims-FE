@@ -7,61 +7,35 @@
  * – Mobile (< md) still hides off‑canvas for full‑screen content space.
  */
 
-"use client";
+'use client';
 
 import { useState } from "react";
 import Link from "next/link";
 import { Menu as MenuIcon } from "lucide-react";
 import { MenuItem } from "types/response/menuresponse/menuitem";
+import Logout from 'components/ui/user/logout';
+import HamburgerButton from 'components/ui/HamburgerButton';
 
 interface SideMenuProps {
   items: MenuItem[];
 }
 
 export default function SideMenu({ items }: SideMenuProps) {
-  const [open, setOpen] = useState(true);
   // Track which root menu is open (accordion)
   const [activeRoot, setActiveRoot] = useState<number | null>(null);
-
-  const toggle = () => setOpen((o) => !o);
-
+  const [open, setOpen] = useState(true);
   return (
-    <>
-      {/* Hamburger – sticks to sidebar edge */}
-      <button
-        aria-label="Toggle menu"
-        onClick={toggle}
-        className="absolute left-2 top-3 z-20 rounded-md border p-2 shadow md:static md:ml-2 md:mt-3 md:hidden bg-white/80 hover:bg-blue-100 transition"
-      >
-        <MenuIcon className="h-5 w-5 text-blue-700" />
-      </button>
-
-      {/* Overlay (mobile only) */}
-      <div
-        onClick={toggle}
-        className={`fixed inset-0 z-10 bg-white transition-opacity md:hidden ${
-          open ? "opacity-100" : "pointer-events-none opacity-0"
-        }`}
-      />
-
-      {/* Sidebar */}
-      <nav
-        className={`fixed inset-y-0 z-10 flex flex-col bg-gradient-to-br from-blue-100 to-blue-200 shadow-xl transition-all duration-200 ${
-          open ? "w-64" : "w-16 md:w-16"
-        } ${
-          open ? "translate-x-0" : "-translate-x-full md:translate-x-0"
-        } border-r border-blue-200/60`}
-      >
-        {/* Desktop hamburger inside sidebar (hidden on md+) */}
-        <button
-          aria-label="Toggle menu"
-          onClick={toggle}
-          className="mb-4 hidden self-end rounded-md border bg-white p-2 shadow md:block hover:bg-blue-100 transition"
-        >
-          <MenuIcon className="h-5 w-5 text-blue-700" />
-        </button>
-
-        <ul className="flex-1 space-y-1 px-2 pt-5">
+    <nav
+      className={
+        `fixed inset-y-0 z-10 flex flex-col justify-between bg-gradient-to-br from-blue-100 to-blue-200 shadow-xl transition-all duration-200 ${open ? 'w-64' : 'w-16'} border-r border-blue-200/60`
+      }
+    >
+      <div>
+        {/* Hamburger top right */}
+        <div className="flex justify-end p-4">
+          <HamburgerButton onClick={() => setOpen((o) => !o)} />
+        </div>
+        <ul className="flex-1 space-y-1 px-2 pt-1">
           {items.map((it, idx) => (
             <MenuNode
               key={it.id}
@@ -74,8 +48,11 @@ export default function SideMenu({ items }: SideMenuProps) {
             />
           ))}
         </ul>
-      </nav>
-    </>
+      </div>
+      <div className="p-4">
+        <Logout open={open} />
+      </div>
+    </nav>
   );
 }
 
@@ -142,7 +119,7 @@ function MenuNode({
 
       {/* Accordion submenu: only show if active */}
       {hasChildren && ((isRoot ? isActive : activeChild === 0)) && (
-        <ul className="space-y-1 mt-1 ml-2 border-l border-blue-200 pl-2 transition-all duration-200">
+        <ul className="space-y-1 mt-1 ml-2 border-l-2 border-solid border-blue-400 pl-2 transition-all duration-200">
           {item.children.map((c, idx) => (
             <MenuNode
               key={c.id}

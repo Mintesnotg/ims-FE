@@ -10,7 +10,7 @@ export async function middleware(request: NextRequest) {
   const token = (await cookies()).get("accessToken")?.value;
 
 
-  const publicPaths = ['/login', '/register']; // Adjust as needed
+  const publicPaths = ['/login', '/register', '/unauthorized' ,'/']; // Add unauthorized as public
 
   if (publicPaths.includes(request.nextUrl.pathname)) {
     return NextResponse.next();
@@ -22,6 +22,14 @@ export async function middleware(request: NextRequest) {
     const loginUrl = new URL('/login', request.url);
     loginUrl.searchParams.set('redirect', request.nextUrl.pathname); // Optional: Preserve intended destination
     return NextResponse.redirect(loginUrl);
+  }
+
+  // --- Authorization check placeholder ---
+  // Replace this with your actual logic (e.g., decode token, check roles, etc.)
+  const isAuthorized = true; // <-- Set to false to test unauthorized redirect
+
+  if (!isAuthorized) {
+    return NextResponse.redirect(new URL('/unauthorized', request.url));
   }
 
   // Token is valid, proceed with the request

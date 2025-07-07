@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { MenuItem } from "types/response/menuresponse/menuitem";
 import { MENU_ENDPOINTS } from "../../lib/apiendpoints";
 import { redirect } from 'next/navigation';
+import axios from 'axios';
 // MENU_ENDPOINTS
 
 
@@ -30,20 +31,18 @@ export async function getSideMenus(): Promise<MenuItem[]> {
     const token = (await cookies()).get("accessToken")?.value;
     if (!token) throw new Error("No auth token found");
 
-    const res = await fetch(`${MENU_ENDPOINTS.Menus}`, {
-        cache: "no-cache",            // always fresh for the user who just logged in
-        next: { revalidate: 0 },      // disable Next.js route‑segment caching
-        headers: {
+    try {
+      const { data: json } = await axios.get(`${MENU_ENDPOINTS.Menus}`,
+        {
+          headers: {
             Accept: "application/json",
             Authorization: `Bearer ${token}`
-        },
-    });
-
-    if (!res.ok) {
-        redirect('/login');
+          },
+        }
+      );
+      const root = json.data?.$values?.[0];
+      return root?.children?.$values?.map(mapNode) ?? [];
+    } catch (err: any) {
+      redirect('/login');
     }
-    debugger;
-    const json = await res.json();                         // <‑‑ full payload you pasted
-    const root = json.data?.$values?.[0];                  // "ROOT" node
-    return root?.children?.$values?.map(mapNode) ?? [];
 }
