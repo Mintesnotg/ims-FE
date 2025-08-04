@@ -16,18 +16,45 @@ const Login = () => {
         'use server';
 
         const payload = Object.fromEntries(formdata) as LoginFormValues;
-        const result = await authenticate(payload);
-        if (result.isSuccess && result.data?.accessToken) {
-            (await cookies()).set('accessToken', result.data.accessToken, {
-                httpOnly: true,
-                secure: true,
-                sameSite: 'lax',
-                path: '/',
-            });
-            redirect('/dashboard');             // never reaches next line
-        }
+        
+        try {
+            const result = await authenticate(payload);
+            if (result.isSuccess && result.data?.accessToken) {
+                (await cookies()).set('accessToken', result.data.accessToken, {
+                    httpOnly: true,
+                    secure: true,
+                    sameSite: 'lax',
+                    path: '/',
+                });
+                redirect('/dashboard');             // never reaches next line
+            }
 
-        return { response: result };              // <‑‑ wrapped
+            return { response: result };
+        } catch (error: any) {
+            // Handle connection refused error
+            if (error.code === 'ECONNREFUSED' || error.message?.includes('ECONNREFUSED')) {
+                const errorResponse: LoginResponse = {
+                    isSuccess: false,
+                    message: 'Unable to connect to the server. Please check if the backend is running.',
+                    code: 'CONNECTION_ERROR',
+                    errors: ['Server connection refused. Please try again later.'],
+                    operationStatus: 'Failed' as any,
+                    timestamp: new Date().toISOString()
+                };
+                return { response: errorResponse };
+            }
+            
+            // Handle other network errors
+            const errorResponse: LoginResponse = {
+                isSuccess: false,
+                message: 'Network error occurred. Please check your connection and try again.',
+                code: 'NETWORK_ERROR',
+                errors: [error.message || 'An unexpected error occurred'],
+                operationStatus: 'Failed' as any,
+                timestamp: new Date().toISOString()
+            };
+            return { response: errorResponse };
+        }
     }
 
     return (

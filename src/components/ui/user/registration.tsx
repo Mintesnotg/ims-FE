@@ -7,6 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { RegisterResponse } from 'types/response/userresponse/registerresponse';
 import { Toaster, toast } from 'react-hot-toast';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 // import { ToastContainer, toast } from 'react-toastify';
 // import 'react-toastify/dist/ReactToastify.css';
 
@@ -42,6 +43,8 @@ const Registration = ({action}:RegisterFormProps) => {
             // alert(`${response?.message}`)
             toast.error(`${response?.message}`);
             reset()
+        } else {     
+            redirect('/login');
         }
     };
     return (

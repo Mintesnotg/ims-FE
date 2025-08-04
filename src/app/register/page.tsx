@@ -14,10 +14,6 @@ export default function Register() {
 
         const payload = Object.fromEntries(formdata) as RegisterValues;
         const result = await registeruser(payload);
-        if (result.isSuccess) {
-            redirect('/login');             // never reaches next line
-        }
-        debugger;
         return { response: result };              // <‑‑ wrapped
     }
 
