@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginResponse } from "types/response/userresponse/loginresponse";
 import { useState } from "react";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 type Props = {
     action: (fd: FormData) => Promise<{ response?: LoginResponse  | undefined }>;
 };
@@ -21,19 +22,21 @@ export default function Loginform({ action, }: Props) {
     } = useForm<LoginFormValues>({resolver:zodResolver(loginSchema)});
     const [loginerror, setLoginError] = useState("")
     const onSubmit = async (values: LoginFormValues) => {
-        debugger;
+
 
 
         const formData = new FormData();
         for (const [key, value] of Object.entries(values)) {
             formData.append(key, value);
         }
-        debugger
+
         const {response} = await action(formData);
-         
+        debugger;
         if (!response?.isSuccess) {
               setLoginError(response?.message ?? 'Unknown error, please try again');
 
+        } else {
+            redirect('/dashboard');
         }
 
     };

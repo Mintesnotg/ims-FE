@@ -14,7 +14,7 @@ export default function Register() {
 
         const payload = Object.fromEntries(formdata) as RegisterValues;
         const result = await registeruser(payload);
-        return { response: result };              // <‑‑ wrapped
+        return { response: result.response };              // <‑‑ wrapped
     }
 
     return (

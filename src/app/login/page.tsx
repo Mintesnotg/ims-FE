@@ -11,12 +11,14 @@ import { cookies } from 'next/headers';
 export const metadata: Metadata = { title: 'Sign in' };
 
 const Login = () => {
- 
+   debugger;
     async function loginaction(formdata: FormData): Promise<{ response: LoginResponse }> {
         'use server';
 
         const payload = Object.fromEntries(formdata) as LoginFormValues;
-        
+         
+
+
         try {
             const result = await authenticate(payload);
             if (result.isSuccess && result.data?.accessToken) {
@@ -26,11 +28,10 @@ const Login = () => {
                     sameSite: 'lax',
                     path: '/',
                 });
-                redirect('/dashboard');             // never reaches next line
             }
-
             return { response: result };
         } catch (error: any) {
+
             // Handle connection refused error
             if (error.code === 'ECONNREFUSED' || error.message?.includes('ECONNREFUSED')) {
                 const errorResponse: LoginResponse = {
@@ -43,7 +44,7 @@ const Login = () => {
                 };
                 return { response: errorResponse };
             }
-            
+    
             // Handle other network errors
             const errorResponse: LoginResponse = {
                 isSuccess: false,
