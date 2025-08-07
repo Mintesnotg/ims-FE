@@ -21,6 +21,7 @@ interface SideMenuProps {
 }
 
 export default function SideMenu({ items }: SideMenuProps) {
+
   // Track which root menu is open (accordion)
   const [activeRoot, setActiveRoot] = useState<number | null>(null);
   const [open, setOpen] = useState(true);

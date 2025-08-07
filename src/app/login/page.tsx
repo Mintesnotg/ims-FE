@@ -2,7 +2,7 @@ import React from 'react'
 import { Metadata } from 'next';
 import Loginform from 'components/ui/user/loginform';    
 import { redirect } from 'next/navigation';
-import { authenticate } from 'services/auth';
+import { authenticate } from 'services/useraccount/auth';
 
 import { LoginFormValues } from '../../../lib/schemas/useraccount/loginschema';
 import { LoginResponse } from 'types/response/userresponse/loginresponse';
@@ -16,9 +16,6 @@ const Login = () => {
         'use server';
 
         const payload = Object.fromEntries(formdata) as LoginFormValues;
-         
-
-
         try {
             const result = await authenticate(payload);
             if (result.isSuccess && result.data?.accessToken) {

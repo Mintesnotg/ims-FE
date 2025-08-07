@@ -1,5 +1,5 @@
 import React from 'react'
-import { logoutAction } from 'services/logoutservice';
+import { logoutAction } from 'services/useraccount/logoutservice';
 
 const Logout = ({ open = true }: { open?: boolean }) => {
   return (
