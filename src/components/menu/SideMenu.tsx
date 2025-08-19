@@ -49,9 +49,7 @@ export default function SideMenu({ items }: SideMenuProps) {
           ))}
         </ul>
       </div>
-      <div className="p-4">
-        <Logout open={open} />
-      </div>
+
     </nav>
   );
 }

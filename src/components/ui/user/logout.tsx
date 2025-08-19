@@ -4,9 +4,9 @@ import { logoutAction } from 'services/useraccount/logoutservice';
 const Logout = ({ open = true }: { open?: boolean }) => {
   return (
     <form action={logoutAction} className="">
-      <button
+      <button 
         type="submit"
-        className={`inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-indigo-500 to-blue-500 text-sm font-semibold text-white shadow-lg transition-all duration-150 hover:from-indigo-600 hover:to-blue-600 hover:scale-105 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 focus-visible:ring-offset-2 ${open ? 'px-5 py-2.5' : 'w-12 h-12 p-0'}`}
+        className={`inline-flex items-center justify-center gap-2 hover:cursor-pointer rounded-full bg-gradient-to-r from-indigo-500 to-blue-500 text-sm font-semibold text-white shadow-lg transition-all duration-150 hover:from-indigo-600 hover:to-blue-600 hover:scale-105 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 focus-visible:ring-offset-2 ${open ? 'px-5 py-2.5' : 'w-12 h-12 p-0'}`}
         title="Logout"
       >
         {/* Left arrow icon */}

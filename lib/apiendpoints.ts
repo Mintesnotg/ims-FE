@@ -18,3 +18,7 @@ export const ROLE_ENDPOINT = {
     RoleWithPrivilege:`${BASE_URL}/api/v1/Role/GetRole_Privilege`,
 
 }
+
+export const PRIVILEGE_ENDPOINTS = {
+    All: `${BASE_URL}/api/v1/Privilege/GetAllPrivileges`
+}
