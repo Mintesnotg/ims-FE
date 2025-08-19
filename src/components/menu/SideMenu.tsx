@@ -11,7 +11,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Menu as MenuIcon } from "lucide-react";
 import { MenuItem } from "types/response/menuresponse/menuitem";
 import Logout from 'components/ui/user/logout';
 import HamburgerButton from 'components/ui/HamburgerButton';

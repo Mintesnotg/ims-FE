@@ -11,3 +11,9 @@ export const USER_ACCOUNT_ENDPOINTS = {
 export const MENU_ENDPOINTS ={
     Menus : `${BASE_URL}/api/v1/MenuBuilder/Menus`
 }
+
+export const ROLE_ENDPOINT = {
+
+    Roles : `${BASE_URL}/api/v1/Role/GetAllRoles`
+
+}

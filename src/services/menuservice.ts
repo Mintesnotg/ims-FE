@@ -3,9 +3,10 @@ import { redirect } from 'next/navigation';
 import axios, { AxiosError } from 'axios';
 import { MenuItem } from "types/response/menuresponse/menuitem";
 import { MENU_ENDPOINTS } from "../../lib/apiendpoints";
+import getAuthToken from "./utilityservices/accesstokenservice";
 
 // Constants
-const AUTH_TOKEN_COOKIE_NAME = "accessToken";
+
 const AUTHORIZATION_HEADER = "Authorization";
 const ACCEPT_HEADER = "Accept";
 const APPLICATION_JSON = "application/json";
@@ -45,26 +46,7 @@ function transformMenuNode(node: RawMenuNode): MenuItem {
     };
 }
 
-/**
- * Retrieves the authentication token from cookies
- * @returns The authentication token
- * @throws Error if no token is found
- */
-async function getAuthToken(): Promise<string> {
-    const token = (await cookies()).get(AUTH_TOKEN_COOKIE_NAME)?.value;
-    
-    if (!token) {
-        throw new Error("Authentication token not found");
-    }
-    
-    return token;
-}
 
-/**
- * Fetches menu data from the API
- * @param token - Authentication token
- * @returns Promise resolving to the API response
- */
 async function fetchMenuData(token: string): Promise<MenuApiResponse> {
     const response = await axios.get<MenuApiResponse>(MENU_ENDPOINTS.Menus, {
         headers: {
@@ -98,7 +80,7 @@ function processMenuResponse(response: MenuApiResponse): MenuItem[] {
  */
 export async function getSideMenus(): Promise<MenuItem[]> {
     try {
-      debugger;
+  
         const token = await getAuthToken();
         const response = await fetchMenuData(token);
         return processMenuResponse(response);
