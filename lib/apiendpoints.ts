@@ -14,6 +14,7 @@ export const MENU_ENDPOINTS ={
 
 export const ROLE_ENDPOINT = {
 
-    Roles : `${BASE_URL}/api/v1/Role/GetAllRoles`
+    Roles : `${BASE_URL}/api/v1/Role/GetAllRoles`,
+    RoleWithPrivilege:`${BASE_URL}/api/v1/Role/GetRole_Privilege`,
 
 }

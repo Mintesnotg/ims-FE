@@ -2,8 +2,9 @@
 
 import React, { useEffect, useState } from 'react';
 import DataTable from '../DataTable';
-import { GetAllRoles } from '../../../services/useraccount/roleservice';
+import { GetAllRoles, GetRoleWithPrivilege } from '../../../services/useraccount/roleservice';
 import { Role } from '../../../types/response/roleresponse/roleresponse';
+import { UpdatedRolePayload } from '../../../types/response/roleresponse/updateroleresponse';
 import Modal from '../Modal';
 
 const columns = [
@@ -23,6 +24,8 @@ const fetchUserRoles = async () => {
     }
     return [];
   } catch (error) {
+    // window.location.href = "/login";
+
     console.error('Error fetching roles:', error);
     return [];
   }
@@ -32,8 +35,10 @@ const UserRolesPage = () => {
   const [data, setData] = useState<Role[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  // const [editingRole, setEditingRole] = useState<Role | null>(null);
-  // const [editFields, setEditFields] = useState<{ roleName: string; description: string }>({ roleName: '', description: '' });
+  const [searchText, setSearchText] = useState('');
+  const [roleDetails, setRoleDetails] = useState<UpdatedRolePayload | null>(null);
+  const [loadingRole, setLoadingRole] = useState(false);
+  const [editFields, setEditFields] = useState<{ roleName: string; description: string }>({ roleName: '', description: '' });
 
   useEffect(() => {
     fetchUserRoles().then((res) => {
@@ -42,13 +47,22 @@ const UserRolesPage = () => {
     });
   }, []);
 
-  const handleEdit = (id: string) => {
-    const role = data.find((r) => r.id === id) || null;
-    // setEditingRole(role);
-    if (role) {
-      // setEditFields({ roleName: role.roleName, description: role.description });
-    }
+  const handleEdit = async (id: string) => {
+    debugger;
     setIsModalOpen(true);
+    setLoadingRole(true);
+    try {
+      const res = await GetRoleWithPrivilege(id);
+      debugger;
+      if (res.isSuccess && res.data) {
+        setRoleDetails(res.data);
+        setEditFields({ roleName: res.data.name, description: res.data.description });
+      }
+    } catch (e) {
+      console.error('Failed to load role details:', e);
+    } finally {
+      setLoadingRole(false);
+    }
   };
 
   const handleDelete = (id: string) => {
@@ -57,25 +71,19 @@ const UserRolesPage = () => {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    // setEditingRole(null);
+    setRoleDetails(null);
+    setSearchText('');
   };
 
   const handleFieldChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    // setEditFields((prev) => ({ ...prev, [name]: value }));
+    setEditFields((prev) => ({ ...prev, [name]: value }));
   };
 
-  // const handleSave = async () => {
-  //   if (!editingRole) return;
-  //   // TODO: Call update role API here
-  //   setData((prev) =>
-  //     prev.map((r) =>
-  //       r.id === editingRole.id ? { ...r, roleName: editFields.roleName, description: editFields.description } : r
-  //     )
-  //   );
-  //   setIsModalOpen(false);
-  //   setEditingRole(null);
-  // };
+  const handleUpdate = async () => {
+    // TODO: call update role API with editFields and roleDetails?.id
+    setIsModalOpen(false);
+  };
 
   // Transform data to include action buttons and auto-increment number
   const transformedData = data.map((role, index) => ({
@@ -100,6 +108,12 @@ const UserRolesPage = () => {
     ),
   }));
 
+  const filteredPrivileges = (roleDetails?.privileges?.$values ?? []).filter((p) => {
+    if (!searchText) return true;
+    const q = searchText.toLowerCase();
+    return p.name.toLowerCase().includes(q) || p.description.toLowerCase().includes(q);
+  });
+
   return (
     <div className="p-8">
       <h1 className="text-1xl text-center font-bold mb-4">User Roles</h1>
@@ -117,32 +131,59 @@ const UserRolesPage = () => {
         onClose={handleCloseModal}
         footer={(
           <>
-            <button onClick={handleCloseModal} className="px-4 py-2 rounded border">Cancel</button>
+            <button onClick={handleUpdate} className="px-4 py-2 bg-blue-800 text-white hover:bg-blue-500 rounded border">Update</button>
             {/* <button onClick={handleSave} className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700">Save</button> */}
           </>
         )}
       >
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">Role Name</label>
-            <input
-              name="roleName"
-              // value={editFields.roleName}
-              onChange={handleFieldChange}
-              className="w-full rounded border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Description</label>
-            <textarea
-              name="description"
-              // value={editFields.description}
-              onChange={handleFieldChange}
-              className="w-full rounded border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-              rows={3}
-            />
-          </div>
+        <div className="mb-4">
+          <input
+            type="text"
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            placeholder="Search privileges..."
+            className="w-full rounded border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
         </div>
+        {loadingRole ? (
+          <div className="py-6 text-center text-sm text-gray-500">Loading role details...</div>
+        ) : (
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">Role Name</label>
+              <input
+                name="roleName"
+                value={editFields.roleName}
+                onChange={handleFieldChange}
+                className="w-full rounded border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Description</label>
+              <textarea
+                name="description"
+                value={editFields.description}
+                onChange={handleFieldChange}
+                className="w-full rounded border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                rows={3}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Privileges</label>
+              <div className="max-h-48 overflow-y-auto border rounded p-2">
+                {filteredPrivileges.length === 0 ? (
+                  <div className="text-sm text-gray-500">No privileges found</div>
+                ) : (
+                  filteredPrivileges.map((p) => (
+                    <div key={p.id} className="text-sm py-1">
+                      {p.name}
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </Modal>
     </div>
   );
