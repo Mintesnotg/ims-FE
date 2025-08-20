@@ -16,6 +16,7 @@ export const ROLE_ENDPOINT = {
 
     Roles : `${BASE_URL}/api/v1/Role/GetAllRoles`,
     RoleWithPrivilege:`${BASE_URL}/api/v1/Role/GetRole_Privilege`,
+    UpdateRole: `${BASE_URL}/api/v1/Privilege/AssignRoletoPrivilages`,
 
 }
 

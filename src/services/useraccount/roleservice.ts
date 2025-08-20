@@ -115,3 +115,38 @@ export async function GetAllPrivileges(): Promise<AllPrivilegesResponse> {
         throw error as Error;
     }
 }
+
+// Update role with privileges
+export async function UpdateRole(roleId: string, privilegeIds: string[]): Promise<UpdateRoleResponse> {
+    try {
+        const token = await getAuthToken();
+        const response = await axios.put<UpdateRoleResponse>(ROLE_ENDPOINT.UpdateRole, {
+            roleId: roleId,
+            privilegeIds: privilegeIds
+        }, {
+            headers: {
+                [ACCEPT_HEADER]: APPLICATION_JSON,
+                [AUTHORIZATION_HEADER]: `Bearer ${token}`,
+            },
+        });
+        if (response.status !== 200) {
+            throw new Error(`Unexpected status code: ${response.status}`);
+        }
+        return response.data;
+    } catch (error) {
+        console.error('Error updating role:', error);
+        if (error instanceof AxiosError) {
+            const status = error.response?.status;
+            if (status === 401) {
+                window.location.href = '/login';
+                throw new Error('Unauthorized access');
+            }
+            throw new Error(`API request failed${status ? ` with status ${status}` : ''}: ${error.message}`);
+        }
+        if (error instanceof Error && error.message.includes('Authentication token not found')) {
+            window.location.href = '/login';
+            throw new Error('Authentication token not found');
+        }
+        throw error as Error;
+    }
+}

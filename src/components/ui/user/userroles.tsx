@@ -1,8 +1,8 @@
 'use client'
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import DataTable from '../DataTable';
-import { GetAllRoles, GetRoleWithPrivilege, GetAllPrivileges } from '../../../services/useraccount/roleservice';
+import { GetAllRoles, GetRoleWithPrivilege, GetAllPrivileges, UpdateRole } from '../../../services/useraccount/roleservice';
 import { Role } from '../../../types/response/roleresponse/roleresponse';
 import { UpdatedRolePayload } from '../../../types/response/roleresponse/updateroleresponse';
 import { PrivilegeItem } from '../../../types/response/roleresponse/privilegeresponse';
@@ -42,6 +42,8 @@ const UserRolesPage = () => {
   const [editFields, setEditFields] = useState<{ roleName: string; description: string }>({ roleName: '', description: '' });
   const [allPrivileges, setAllPrivileges] = useState<PrivilegeItem[]>([]);
   const [assignedIds, setAssignedIds] = useState<Set<string>>(new Set());
+  const [currentRoleId, setCurrentRoleId] = useState<string>('');
+  const [isUpdating, setIsUpdating] = useState(false);
 
   useEffect(() => {
     fetchUserRoles().then((res) => {
@@ -54,8 +56,9 @@ const UserRolesPage = () => {
     debugger;
     setIsModalOpen(true);
     setLoadingRole(true);
+    setCurrentRoleId(id);
     try {
-      const [roleRes, allPrivRes] = await Promise.all([
+      const [assignedprevileges, allPrivRes] = await Promise.all([
         GetRoleWithPrivilege(id),
         GetAllPrivileges(),
       ]);
@@ -65,10 +68,10 @@ const UserRolesPage = () => {
       } else {
         setAllPrivileges([]);
       }
-      if (roleRes.isSuccess && roleRes.data) {
-        setRoleDetails(roleRes.data);
-        setEditFields({ roleName: roleRes.data.name, description: roleRes.data.description });
-        const currentAssigned = roleRes.data.privileges?.$values?.map((p) => p.id) ?? [];
+      if (assignedprevileges.isSuccess && assignedprevileges.data) {
+        setRoleDetails(assignedprevileges.data);
+        setEditFields({ roleName: assignedprevileges.data.name, description: assignedprevileges.data.description });
+        const currentAssigned = assignedprevileges.data.privileges?.$values?.map((p) => p.id) ?? [];
         setAssignedIds(new Set(currentAssigned));
       } else {
         setRoleDetails(null);
@@ -82,6 +85,8 @@ const UserRolesPage = () => {
   };
 
   const handleDelete = (id: string) => {
+
+    
     console.log('Delete role with ID:', id);
   };
 
@@ -91,6 +96,8 @@ const UserRolesPage = () => {
     setSearchText('');
     setAllPrivileges([]);
     setAssignedIds(new Set());
+    setCurrentRoleId('');
+    setIsUpdating(false);
   };
 
   const handleFieldChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -99,7 +106,9 @@ const UserRolesPage = () => {
   };
 
   const toggleAssigned = (privId: string) => {
+      debugger;
     setAssignedIds((prev) => {
+      debugger
       const next = new Set(prev);
       if (next.has(privId)) {
         next.delete(privId);
@@ -111,8 +120,31 @@ const UserRolesPage = () => {
   };
 
   const handleUpdate = async () => {
-    // TODO: call update role API with editFields and Array.from(assignedIds)
-    setIsModalOpen(false);
+    if (!currentRoleId) {
+      alert('No role selected for update');
+      return;
+    }
+
+    setIsUpdating(true);
+    try {
+      const privilegeIds = Array.from(assignedIds);
+      const response = await UpdateRole(currentRoleId, privilegeIds);
+      
+      if (response.isSuccess) {
+        alert('Role updated successfully!');
+        // Refresh the roles list
+        const updatedRoles = await fetchUserRoles();
+        setData(updatedRoles);
+        setIsModalOpen(false);
+      } else {
+        alert(`Update failed: ${response.message || 'Unknown error occurred'}`);
+      }
+    } catch (error) {
+      console.error('Error updating role:', error);
+      alert(`Error updating role: ${error instanceof Error ? error.message : 'Unknown error occurred'}`);
+    } finally {
+      setIsUpdating(false);
+    }
   };
 
   // Transform data to include action buttons and auto-increment number
@@ -139,11 +171,39 @@ const UserRolesPage = () => {
   }));
 
   const filteredPrivileges = allPrivileges.filter((p) => {
-            debugger;
+    debugger;
     if (!searchText) return true;
     const q = searchText.toLowerCase();
+
     return p.name.toLowerCase().includes(q) || p.description.toLowerCase().includes(q);
   });
+
+  const selectAllRef = useRef<HTMLInputElement | null>(null);
+
+  const filteredSelectedCount = filteredPrivileges.reduce((count, p) => count + (assignedIds.has(p.id) ? 1 : 0), 0);
+  const allFilteredSelected = filteredSelectedCount === filteredPrivileges.length && filteredPrivileges.length > 0;
+  const noneFilteredSelected = filteredSelectedCount === 0;
+  const isIndeterminate = !noneFilteredSelected && !allFilteredSelected;
+
+  useEffect(() => {
+    if (selectAllRef.current) {
+      selectAllRef.current.indeterminate = isIndeterminate;
+    }
+  }, [isIndeterminate, filteredPrivileges.length, filteredSelectedCount]);
+
+  const toggleSelectAllFiltered = () => {
+    setAssignedIds((prev) => {
+      const next = new Set(prev);
+      if (allFilteredSelected) {
+        // unselect all filtered
+        filteredPrivileges.forEach(p => next.delete(p.id));
+      } else {
+        // select all filtered
+        filteredPrivileges.forEach(p => next.add(p.id));
+      }
+      return next;
+    });
+  };
 
   return (
     <div className="p-8">
@@ -162,20 +222,22 @@ const UserRolesPage = () => {
         onClose={handleCloseModal}
         footer={(
           <>
-            <button onClick={handleUpdate} className="px-4 py-2 bg-blue-800 text-white hover:bg-blue-500 rounded border">Update</button>
+            <button 
+              onClick={handleUpdate} 
+              disabled={isUpdating}
+              className={`px-4 py-2 text-white rounded border ${
+                isUpdating 
+                  ? 'bg-gray-400 cursor-not-allowed' 
+                  : 'bg-blue-800 hover:bg-blue-500'
+              }`}
+            >
+              {isUpdating ? 'Updating...' : 'Update'}
+            </button>
             {/* <button onClick={handleSave} className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700">Save</button> */}
           </>
         )}
       >
-        <div className="mb-4">
-          <input
-            type="text"
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            placeholder="Search privileges..."
-            className="w-full rounded border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-          />
-        </div>
+
         {loadingRole ? (
           <div className="py-6 text-center text-sm text-gray-500">Loading role details...</div>
         ) : (
@@ -201,6 +263,28 @@ const UserRolesPage = () => {
             </div>
             <div>
               <label className="block text-sm font-medium mb-2">Privileges</label>
+              <div className="mb-4">
+          <input
+            type="text"
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            placeholder="Search privileges..."
+            className="w-full rounded border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
+        </div>
+              <div className="mb-2 flex items-center gap-2">
+                <input
+                  ref={selectAllRef}
+                  type="checkbox"
+                  checked={allFilteredSelected}
+                  onChange={toggleSelectAllFiltered}
+                  className="h-4 w-4"
+                />
+                <span className="text-sm">Select all</span>
+                {filteredPrivileges.length > 0 && (
+                  <span className="ml-auto text-xs text-gray-500">{filteredSelectedCount}/{filteredPrivileges.length} selected</span>
+                )}
+              </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-64 overflow-y-auto border rounded p-2">
                 {filteredPrivileges.length === 0 ? (
                   <div className="col-span-2 text-sm text-gray-500">No privileges found</div>
