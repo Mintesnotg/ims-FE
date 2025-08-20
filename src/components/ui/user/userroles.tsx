@@ -7,6 +7,7 @@ import { Role } from '../../../types/response/roleresponse/roleresponse';
 import { UpdatedRolePayload } from '../../../types/response/roleresponse/updateroleresponse';
 import { PrivilegeItem } from '../../../types/response/roleresponse/privilegeresponse';
 import Modal from '../Modal';
+import Swal from 'sweetalert2';
 
 const columns = [
   { key: 'no', label: 'No_' },
@@ -84,10 +85,33 @@ const UserRolesPage = () => {
     }
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
+    const result = await Swal.fire({
+      title: 'Delete role?',
+      text: 'Are you sure you want to delete this role? This action cannot be undone.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#dc2626',
+      cancelButtonColor: '#6b7280',
+      reverseButtons: true,
+    });
 
-    
-    console.log('Delete role with ID:', id);
+    if (!result.isConfirmed) {
+     
+     
+      
+      return;
+    }
+
+    // TODO: Integrate delete API here
+    await Swal.fire({
+      icon: 'success',
+      title: 'Deleted',
+      text: 'Role has been deleted.',
+      confirmButtonColor: '#1e3a8a',
+    });
   };
 
   const handleCloseModal = () => {
@@ -121,7 +145,12 @@ const UserRolesPage = () => {
 
   const handleUpdate = async () => {
     if (!currentRoleId) {
-      alert('No role selected for update');
+      await Swal.fire({
+        icon: 'warning',
+        title: 'No role selected',
+        text: 'Please select a role to update.',
+        confirmButtonColor: '#1e3a8a'
+      });
       return;
     }
 
@@ -131,17 +160,32 @@ const UserRolesPage = () => {
       const response = await UpdateRole(currentRoleId, privilegeIds);
       
       if (response.isSuccess) {
-        alert('Role updated successfully!');
+        await Swal.fire({
+          icon: 'success',
+          title: 'Updated',
+          text: 'Role updated successfully!',
+          confirmButtonColor: '#1e3a8a'
+        });
         // Refresh the roles list
         const updatedRoles = await fetchUserRoles();
         setData(updatedRoles);
         setIsModalOpen(false);
       } else {
-        alert(`Update failed: ${response.message || 'Unknown error occurred'}`);
+        await Swal.fire({
+          icon: 'error',
+          title: 'Update failed',
+          text: response.message || 'Unknown error occurred',
+          confirmButtonColor: '#dc2626'
+        });
       }
     } catch (error) {
       console.error('Error updating role:', error);
-      alert(`Error updating role: ${error instanceof Error ? error.message : 'Unknown error occurred'}`);
+      await Swal.fire({
+        icon: 'error',
+        title: 'Error updating role',
+        text: error instanceof Error ? error.message : 'Unknown error occurred',
+        confirmButtonColor: '#dc2626'
+      });
     } finally {
       setIsUpdating(false);
     }
