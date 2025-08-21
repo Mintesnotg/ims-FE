@@ -8,6 +8,8 @@ import { LoginResponse } from "types/response/userresponse/loginresponse";
 import { useState } from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { GoogleLogin } from "@react-oauth/google";
+
 type Props = {
     action: (fd: FormData) => Promise<{ response?: LoginResponse  | undefined }>;
 };
@@ -94,6 +96,16 @@ export default function Loginform({ action, }: Props) {
                         {isSubmitting ? 'Signing in…' : 'Sign in'}
                     </button>
 
+                    <div className="flex items-center gap-3 py-3">
+                        <div className="h-px bg-blue-200 flex-1" />
+                        <span className="text-xs text-blue-600">OR</span>
+                        <div className="h-px bg-blue-200 flex-1" />
+                    </div>
+
+                    <div className="flex justify-center">
+                        <GoogleButton setLoginError={setLoginError} />
+                    </div>
+
                     <div className="pt-4">
                         <p className="text-center font-light text-blue-700">Don't have an account?{' '}
                             <Link href="/register" className="text-blue-800 font-medium hover:text-blue-500 underline underline-offset-2 transition-colors">Register {arrow}</Link>
@@ -103,4 +115,54 @@ export default function Loginform({ action, }: Props) {
             </div>
         </div>
     )
+}
+
+function GoogleButton({ setLoginError }: { setLoginError: (msg: string) => void }) {
+ 
+    debugger;
+    const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+     debugger;
+    const handleSuccess = async (credential?: string | null) => {
+       debugger;
+        try {
+            if (!credential) {
+                setLoginError('Google sign-in did not return a credential');
+                return;
+            }
+            const res = await fetch('/api/auth/google-signin', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ idToken: credential })
+            });
+            const data = await res.json();
+            if (res.ok && data?.isSuccess) {
+                redirect('/dashboard');
+           
+            }
+            setLoginError(data?.message ?? 'Google sign-in failed');
+        } catch (e: any) {
+            setLoginError(e?.message ?? 'Network error during Google sign-in');
+        }
+    };
+
+    if (!clientId) {
+        return (
+            <button
+                type="button"
+                disabled
+                className="w-full rounded-lg bg-gray-300 py-2 font-semibold text-gray-600 mt-2 cursor-not-allowed"
+                title="Google Sign-In requires NEXT_PUBLIC_GOOGLE_CLIENT_ID"
+            >
+                Google Sign-In Unavailable
+            </button>
+        );
+    }
+
+    return (
+        <GoogleLogin
+            onSuccess={(response) => handleSuccess(response.credential)}
+            onError={() => setLoginError('Google sign-in was cancelled or failed')}
+            useOneTap
+        />
+    );
 }

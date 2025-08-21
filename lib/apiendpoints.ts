@@ -3,7 +3,8 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 export const USER_ACCOUNT_ENDPOINTS = {
 
     Login: `${BASE_URL}/api/v1/UserAccout/Login`,
-    Register: `${BASE_URL}/api/v1/UserAccout/Register`
+    Register: `${BASE_URL}/api/v1/UserAccout/Register`,
+    GoogleSignIn: `${BASE_URL}/api/UserAccout/GoogleSignIn`
 
 
 }
