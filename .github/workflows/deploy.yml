@@ -24,7 +24,7 @@ jobs:
       - name: Build Next.js app
         run: npm run build
 
-      - name: Deploy (example: Vercel CLI)
+      - name: Deploy
         run: |
           npm install -g vercel
           vercel --token=${{ secrets.VERCEL_TOKEN }} --prod
