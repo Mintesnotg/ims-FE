@@ -1,7 +1,7 @@
 
 'use client'
 
-import { use, useState } from "react";
+import { useState } from "react";
 
 export default function FilterableUserList({ intialuserlist }: { intialuserlist: { id: number, name: string,email:string }[] }) {
 

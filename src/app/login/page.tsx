@@ -1,17 +1,17 @@
 import React from 'react'
 import { Metadata } from 'next';
 import Loginform from 'components/ui/user/loginform';    
-import { redirect } from 'next/navigation';
 import { authenticate } from 'services/useraccount/auth';
 
 import { LoginFormValues } from '../../../lib/schemas/useraccount/loginschema';
 import { LoginResponse } from 'types/response/userresponse/loginresponse';
 import { cookies } from 'next/headers';
+import { OperationStatus } from 'types/enums/systemenums';
 
 export const metadata: Metadata = { title: 'Sign in' };
 
 const Login = () => {
-   debugger;
+
     async function loginaction(formdata: FormData): Promise<{ response: LoginResponse }> {
         'use server';
 
@@ -25,30 +25,21 @@ const Login = () => {
                     sameSite: 'lax',
                     path: '/',
                 });
-            }
+            } 
             return { response: result };
-        } catch (error: any) {
-
-            // Handle connection refused error
-            if (error.code === 'ECONNREFUSED' || error.message?.includes('ECONNREFUSED')) {
-                const errorResponse: LoginResponse = {
-                    isSuccess: false,
-                    message: 'Unable to connect to the server. Please check if the backend is running.',
-                    code: 'CONNECTION_ERROR',
-                    errors: ['Server connection refused. Please try again later.'],
-                    operationStatus: 'Failed' as any,
-                    timestamp: new Date().toISOString()
-                };
-                return { response: errorResponse };
+        } catch (error: unknown) {
+            // If backend sent a response, return it directly
+            if (error && typeof error === 'object' && 'response' in error && error.response && typeof error.response === 'object' && 'data' in error.response) {
+                return { response: error.response.data as LoginResponse };
             }
-    
-            // Handle other network errors
+
+            // If no backend response (e.g., network error), return a generic error
             const errorResponse: LoginResponse = {
                 isSuccess: false,
-                message: 'Network error occurred. Please check your connection and try again.',
-                code: 'NETWORK_ERROR',
-                errors: [error.message || 'An unexpected error occurred'],
-                operationStatus: 'Failed' as any,
+                message: 'Unable to connect to the server. Please check if the backend is running.',
+                code: 'CONNECTION_ERROR',
+                errors: ['Server connection refused. Please try again later.'],
+                operationStatus: OperationStatus.FAILED,
                 timestamp: new Date().toISOString()
             };
             return { response: errorResponse };

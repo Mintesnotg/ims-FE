@@ -15,7 +15,6 @@ type RegisterFormProps = {
     action: (fd: FormData) => Promise<{ response?: RegisterResponse | undefined }>;
 };
 const Registration = ({action}:RegisterFormProps) => {
-        const arrow = `<-`
     const {
         register,
         handleSubmit,
@@ -32,7 +31,7 @@ const Registration = ({action}:RegisterFormProps) => {
      });
 
     const onSubmit = async (values: RegisterValues) => {
-     debugger;
+  
         const formData = new FormData();
         Object.entries(values).forEach(([key, value]) => formData.append(key, value as string));
         const  { response } = await action(formData);

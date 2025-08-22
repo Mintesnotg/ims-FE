@@ -99,9 +99,6 @@ const UserRolesPage = () => {
     });
 
     if (!result.isConfirmed) {
-     
-     
-      
       return;
     }
 
@@ -158,7 +155,7 @@ const UserRolesPage = () => {
     try {
       const privilegeIds = Array.from(assignedIds);
       const response = await UpdateRole(currentRoleId, privilegeIds);
-      
+    
       if (response.isSuccess) {
         await Swal.fire({
           icon: 'success',
@@ -225,7 +222,7 @@ const UserRolesPage = () => {
   const selectAllRef = useRef<HTMLInputElement | null>(null);
 
   const filteredSelectedCount = filteredPrivileges.reduce((count, p) => count + (assignedIds.has(p.id) ? 1 : 0), 0);
-  const allFilteredSelected = filteredSelectedCount === filteredPrivileges.length && filteredPrivileges.length > 0;
+  const allFilteredSelected = filteredPrivileges.length > 0 && filteredSelectedCount === filteredPrivileges.length;
   const noneFilteredSelected = filteredSelectedCount === 0;
   const isIndeterminate = !noneFilteredSelected && !allFilteredSelected;
 

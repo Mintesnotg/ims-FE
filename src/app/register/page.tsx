@@ -3,8 +3,6 @@ import { RegisterResponse } from "types/response/userresponse/registerresponse";
 import { RegisterValues } from "../../../lib/schemas/useraccount/registration";
 import { registeruser } from "services/useraccount/registeruser";
 
-import { redirect } from "next/navigation";
-
 
 export default function Register() {
 

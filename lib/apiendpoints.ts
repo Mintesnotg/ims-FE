@@ -4,7 +4,7 @@ export const USER_ACCOUNT_ENDPOINTS = {
 
     Login: `${BASE_URL}/api/v1/UserAccout/Login`,
     Register: `${BASE_URL}/api/v1/UserAccout/Register`,
-    GoogleSignIn: `${BASE_URL}/api/UserAccout/GoogleSignIn`
+    GoogleSignIn: `${BASE_URL}/api/v1/UserAccout/GoogleSignIn`
 
 
 }

@@ -7,7 +7,7 @@ interface Column {
 
 interface DataTableProps {
   columns: Column[];
-  data: any[];
+  data: Record<string, string | number | boolean | React.ReactElement>[];
   rowsPerPage?: number;
 }
 

@@ -8,14 +8,14 @@ import { LoginResponse } from "types/response/userresponse/loginresponse";
 import { useState } from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { GoogleLogin } from "@react-oauth/google";
+import GoogleButton from "services/utilityservices/googleauth";
 
 type Props = {
     action: (fd: FormData) => Promise<{ response?: LoginResponse  | undefined }>;
 };
 
 export default function Loginform({ action, }: Props) {
- 
+
         const arrow = `->`
     const {
         register,
@@ -23,9 +23,8 @@ export default function Loginform({ action, }: Props) {
         formState: { errors, isSubmitting },
     } = useForm<LoginFormValues>({resolver:zodResolver(loginSchema)});
     const [loginerror, setLoginError] = useState("")
-    const onSubmit = async (values: LoginFormValues) => {
-
-
+    const oncustomloginSubmit = async (values: LoginFormValues) => {
+        debugger;
 
         const formData = new FormData();
         for (const [key, value] of Object.entries(values)) {
@@ -47,7 +46,7 @@ export default function Loginform({ action, }: Props) {
     return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-200 py-8 px-4">
             <div className="w-full max-w-md mx-auto">
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 rounded-3xl bg-white/90 p-10 shadow-2xl border border-blue-100 backdrop-blur-md">
+                <form onSubmit={handleSubmit(oncustomloginSubmit)} className="space-y-6 rounded-3xl bg-white/90 p-10 shadow-2xl border border-blue-100 backdrop-blur-md">
                     <h2 className="mb-6 text-center text-2xl font-extrabold tracking-tight text-blue-800 drop-shadow-sm">Sign in to your account</h2>
 
                     <label className="block">
@@ -107,7 +106,7 @@ export default function Loginform({ action, }: Props) {
                     </div>
 
                     <div className="pt-4">
-                        <p className="text-center font-light text-blue-700">Don't have an account?{' '}
+                        <p className="text-center font-light text-blue-700">Don&apos;t have an account?{' '}
                             <Link href="/register" className="text-blue-800 font-medium hover:text-blue-500 underline underline-offset-2 transition-colors">Register {arrow}</Link>
                         </p>
                     </div>
@@ -117,52 +116,5 @@ export default function Loginform({ action, }: Props) {
     )
 }
 
-function GoogleButton({ setLoginError }: { setLoginError: (msg: string) => void }) {
- 
-    debugger;
-    const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
-     debugger;
-    const handleSuccess = async (credential?: string | null) => {
-       debugger;
-        try {
-            if (!credential) {
-                setLoginError('Google sign-in did not return a credential');
-                return;
-            }
-            const res = await fetch('/api/auth/google-signin', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ idToken: credential })
-            });
-            const data = await res.json();
-            if (res.ok && data?.isSuccess) {
-                redirect('/dashboard');
-           
-            }
-            setLoginError(data?.message ?? 'Google sign-in failed');
-        } catch (e: any) {
-            setLoginError(e?.message ?? 'Network error during Google sign-in');
-        }
-    };
 
-    if (!clientId) {
-        return (
-            <button
-                type="button"
-                disabled
-                className="w-full rounded-lg bg-gray-300 py-2 font-semibold text-gray-600 mt-2 cursor-not-allowed"
-                title="Google Sign-In requires NEXT_PUBLIC_GOOGLE_CLIENT_ID"
-            >
-                Google Sign-In Unavailable
-            </button>
-        );
-    }
 
-    return (
-        <GoogleLogin
-            onSuccess={(response) => handleSuccess(response.credential)}
-            onError={() => setLoginError('Google sign-in was cancelled or failed')}
-            useOneTap
-        />
-    );
-}

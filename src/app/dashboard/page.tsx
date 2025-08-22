@@ -1,11 +1,6 @@
-export default async function Dashboard() {
-    interface User {
-        id: number;
-        name: string;
-        email: string;
-        // Add other user properties as needed
-    }
+import React from 'react'
 
+export default async function Dashboard() {
 
 
     return (

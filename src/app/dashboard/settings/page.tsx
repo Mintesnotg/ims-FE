@@ -7,7 +7,7 @@ export default async function DashboardSettings() {
   const res = await fetch('http://jsonplaceholder.typicode.com/users', {
     cache: 'no-store',
   })
-  let posts = await res.json();
+  const posts = await res.json();
 
   return (
     

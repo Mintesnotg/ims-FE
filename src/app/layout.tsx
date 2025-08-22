@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Link from "next/link";
 import GoogleProvider from "components/providers/GoogleProvider";
 
 export const metadata: Metadata = {
