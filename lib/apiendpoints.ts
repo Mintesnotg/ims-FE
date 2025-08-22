@@ -6,7 +6,7 @@ export const USER_ACCOUNT_ENDPOINTS = {
     Register: `${BASE_URL}/api/v1/UserAccout/Register`,
     GoogleSignIn: `${BASE_URL}/api/v1/UserAccout/GoogleSignIn`
 
-
+   
 }
 
 export const MENU_ENDPOINTS ={
