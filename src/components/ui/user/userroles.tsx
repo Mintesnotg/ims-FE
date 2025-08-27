@@ -26,8 +26,6 @@ const fetchUserRoles = async () => {
     }
     return [];
   } catch (error) {
-    // window.location.href = "/login";
-
     console.error('Error fetching roles:', error);
     return [];
   }
@@ -54,7 +52,6 @@ const UserRolesPage = () => {
   }, []);
 
   const handleEdit = async (id: string) => {
-    debugger;
     setIsModalOpen(true);
     setLoadingRole(true);
     setCurrentRoleId(id);
@@ -63,7 +60,7 @@ const UserRolesPage = () => {
         GetRoleWithPrivilege(id),
         GetAllPrivileges(),
       ]);
-      debugger;
+
       if (allPrivRes.isSuccess && allPrivRes.data?.$values) {
         setAllPrivileges(allPrivRes.data.$values);
       } else {
@@ -72,7 +69,7 @@ const UserRolesPage = () => {
       if (assignedprevileges.isSuccess && assignedprevileges.data) {
         setRoleDetails(assignedprevileges.data);
         setEditFields({ roleName: assignedprevileges.data.name, description: assignedprevileges.data.description });
-        const currentAssigned = assignedprevileges.data.privileges?.$values?.map((p) => p.id) ?? [];
+        const currentAssigned = assignedprevileges.data.privileges?.$values?.map((p: PrivilegeItem) => p.id) ?? [];
         setAssignedIds(new Set(currentAssigned));
       } else {
         setRoleDetails(null);
@@ -102,7 +99,6 @@ const UserRolesPage = () => {
       return;
     }
 
-    // TODO: Integrate delete API here
     await Swal.fire({
       icon: 'success',
       title: 'Deleted',
@@ -127,9 +123,7 @@ const UserRolesPage = () => {
   };
 
   const toggleAssigned = (privId: string) => {
-      debugger;
     setAssignedIds((prev) => {
-      debugger
       const next = new Set(prev);
       if (next.has(privId)) {
         next.delete(privId);
@@ -212,7 +206,6 @@ const UserRolesPage = () => {
   }));
 
   const filteredPrivileges = allPrivileges.filter((p) => {
-    debugger;
     if (!searchText) return true;
     const q = searchText.toLowerCase();
 
@@ -274,7 +267,6 @@ const UserRolesPage = () => {
             >
               {isUpdating ? 'Updating...' : 'Update'}
             </button>
-            {/* <button onClick={handleSave} className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700">Save</button> */}
           </>
         )}
       >
