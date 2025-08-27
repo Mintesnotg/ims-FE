@@ -4,7 +4,7 @@ import { GetAllRolesResponse } from '../../types/response/roleresponse/rolerespo
 import getAuthToken from 'services/utilityservices/accesstokenservice';
 import { UpdateRoleResponse } from '../../types/response/roleresponse/updateroleresponse';
 import { AllPrivilegesResponse } from '../../types/response/roleresponse/privilegeresponse';
-import { httpGet, httpPut } from '../http';
+import { httpGet, httpPut, httpDelete } from '../http';
 
 // Constants
 const UNAUTHORIZED_TEXT = 'HTTP 401';
@@ -73,17 +73,42 @@ export async function GetAllPrivileges(): Promise<AllPrivilegesResponse> {
 }
 
 // Update role with privileges
-export async function UpdateRole(roleId: string, privilegeIds: string[]): Promise<UpdateRoleResponse> {
+export async function UpdateRole(roleId: string, privilegeIds: string[], roleName?: string, description?: string): Promise<UpdateRoleResponse> {
     try {
         const token = await getAuthToken();
         const data = await httpPut<UpdateRoleResponse>(
             ROLE_ENDPOINT.UpdateRole,
-            { roleId, privilegeIds },
+            { roleId, privilegeIds, name: roleName, description },
             { token }
         );
         return data;
     } catch (error) {
         console.error('Error updating role:', error);
+        if (error instanceof Error && error.message.includes(UNAUTHORIZED_TEXT)) {
+            window.location.href = '/login';
+            throw new Error('Unauthorized access');
+        }
+        if (error instanceof Error && error.message.includes('Authentication token not found')) {
+            window.location.href = '/login';
+            throw new Error('Authentication token not found');
+        }
+        throw error as Error;
+    }
+}
+
+// Delete role by id
+export async function DeleteRole(roleId: string): Promise<GetAllRolesResponse> {
+    try {
+        console.log(` the role id is ${roleId}`)
+ 
+        const token = await getAuthToken();
+        const data = await httpDelete<GetAllRolesResponse>(ROLE_ENDPOINT.DeleteRole, {
+            token,
+             params : {roleId}
+        });
+        return data;
+    } catch (error) {
+        console.error('Error deleting role:', error);
         if (error instanceof Error && error.message.includes(UNAUTHORIZED_TEXT)) {
             window.location.href = '/login';
             throw new Error('Unauthorized access');

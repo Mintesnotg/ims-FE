@@ -2,12 +2,15 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import DataTable from '../DataTable';
-import { GetAllRoles, GetRoleWithPrivilege, GetAllPrivileges, UpdateRole } from '../../../services/useraccount/roleservice';
+import { GetAllRoles, GetRoleWithPrivilege, GetAllPrivileges, UpdateRole, DeleteRole } from '../../../services/useraccount/roleservice';
 import { Role } from '../../../types/response/roleresponse/roleresponse';
 import { UpdatedRolePayload } from '../../../types/response/roleresponse/updateroleresponse';
 import { PrivilegeItem } from '../../../types/response/roleresponse/privilegeresponse';
 import Modal from '../Modal';
 import Swal from 'sweetalert2';
+import Skeleton from '../Skeleton';
+import { formatRoleDate } from '../../../utils/dateHelpers';
+
 
 const columns = [
   { key: 'no', label: 'No_' },
@@ -83,6 +86,7 @@ const UserRolesPage = () => {
   };
 
   const handleDelete = async (id: string) => {
+    debugger;
     const result = await Swal.fire({
       title: 'Delete role?',
       text: 'Are you sure you want to delete this role? This action cannot be undone.',
@@ -99,12 +103,34 @@ const UserRolesPage = () => {
       return;
     }
 
-    await Swal.fire({
-      icon: 'success',
-      title: 'Deleted',
-      text: 'Role has been deleted.',
-      confirmButtonColor: '#1e3a8a',
-    });
+    try {
+      const response = await DeleteRole(id);
+      if (response.isSuccess) {
+        await Swal.fire({
+          icon: 'success',
+          title: 'Deleted',
+          text: 'Role has been deleted.',
+          confirmButtonColor: '#1e3a8a',
+        });
+        const updatedRoles = await fetchUserRoles();
+        setData(updatedRoles);
+      } else {
+        await Swal.fire({
+          icon: 'error',
+          title: 'Delete failed',
+          text: response.message || 'Unknown error occurred',
+          confirmButtonColor: '#dc2626',
+        });
+      }
+    } catch (error) {
+      console.error('Error deleting role:', error);
+      await Swal.fire({
+        icon: 'error',
+        title: 'Error deleting role',
+        text: error instanceof Error ? error.message : 'Unknown error occurred',
+        confirmButtonColor: '#dc2626',
+      });
+    }
   };
 
   const handleCloseModal = () => {
@@ -148,7 +174,7 @@ const UserRolesPage = () => {
     setIsUpdating(true);
     try {
       const privilegeIds = Array.from(assignedIds);
-      const response = await UpdateRole(currentRoleId, privilegeIds);
+      const response = await UpdateRole(currentRoleId, privilegeIds,editFields.roleName,editFields.description);
     
       if (response.isSuccess) {
         await Swal.fire({
@@ -186,7 +212,11 @@ const UserRolesPage = () => {
   const transformedData = data.map((role, index) => ({
     no: index + 1,
     ...role,
-    registeredDate: new Date(role.registeredDate).toLocaleDateString(),
+    registeredDate: (() => {
+      // Use a helper function to format the date
+      // Implemented date formatting using the helper in the respective folder
+      return formatRoleDate(role.registeredDate);
+    })(),
     actions: (
       <div className="flex gap-2">
         <button
@@ -243,8 +273,14 @@ const UserRolesPage = () => {
     <div className="p-8">
       <h1 className="text-1xl text-center font-bold mb-4">User Roles</h1>
       {loading ? (
-        <div className="flex justify-center items-center h-32">
-          <div className="text-lg">Loading roles...</div>
+        <div className="space-y-3">
+          <Skeleton className="h-8 w-40" variant="text" />
+          <div className="grid grid-cols-1 gap-3">
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-full" />
+          </div>
         </div>
       ) : (
         <DataTable columns={columns} data={transformedData} rowsPerPage={4} />
@@ -272,7 +308,19 @@ const UserRolesPage = () => {
       >
 
         {loadingRole ? (
-          <div className="py-6 text-center text-sm text-gray-500">Loading role details...</div>
+          <div className="space-y-4">
+            <Skeleton className="h-8 w-1/3" variant="text" />
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-24 w-full" />
+            <div>
+              <Skeleton className="h-5 w-32 mb-2" variant="text" />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {Array.from({ length: 8 }).map((_, idx) => (
+                  <Skeleton key={idx} className="h-8 w-full" />
+                ))}
+              </div>
+            </div>
+          </div>
         ) : (
           <div className="space-y-4">
             <div>

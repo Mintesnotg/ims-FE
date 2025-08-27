@@ -62,10 +62,25 @@ export async function httpPut<T>(url: string, body?: unknown, options?: HttpOpti
     }
 }
 
+export async function httpDelete<T>(url: string, options?: HttpOptions): Promise<T> {
+    try {
+        console.log(`url is ${url}`)
+        console.log(`params  ${options?.params}`)
+        console.log(`headers  ${options?.headers}`)
+
+        console.log(`token  ${options?.token}`)
+
+        const { data } = await httpClient.delete<T>(url, buildConfig(options));
+        return data;
+    } catch (error) {
+        throw normalizeHttpError(error);
+    }
+}
+
 function normalizeHttpError(error: unknown): AppError {
     if (error instanceof AxiosError) {
         const status = error.response?.status;
-        const fallback = error.response?.data?.message || error.message || 'Request failed';
+        const fallback = (error.response?.data as any)?.message || error.message || 'Request failed';
         const appErr = mapHttpStatusToAppError(status, fallback);
         appErr.details = error.response?.data;
         return appErr;
