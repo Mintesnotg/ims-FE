@@ -54,6 +54,27 @@ const UserRolesPage = () => {
     });
   }, []);
 
+  const handleCreate = async () => {
+    setRoleDetails(null);
+    setEditFields({ roleName: '', description: '' });
+    setAllPrivileges([]);
+    setAssignedIds(new Set());
+    setCurrentRoleId('');
+    setIsUpdating(false);
+    setIsModalOpen(true);
+    setLoadingRole(true);
+    try {
+      const allPrivRes = await GetAllPrivileges();
+      if (allPrivRes.isSuccess && allPrivRes.data?.$values) {
+        setAllPrivileges(allPrivRes.data.$values);
+      }
+    } catch (e) {
+      // ignore, modal will show empty state
+    } finally {
+      setLoadingRole(false);
+    }
+  };
+
   const handleEdit = async (id: string) => {
     setIsModalOpen(true);
     setLoadingRole(true);
@@ -283,7 +304,19 @@ const UserRolesPage = () => {
           </div>
         </div>
       ) : (
-        <DataTable columns={columns} data={transformedData} rowsPerPage={4} />
+        <div className="w-full flex flex-col items-center">
+          <div className="w-full relative mb-4 pt-12">
+            <button
+              onClick={handleCreate}
+              className="inline-flex items-center gap-2  px-3 py-2 rounded bg-green-600 text-white hover:bg-green-700 absolute right-0 top-0"
+              style={{ zIndex: 1 }}
+            >
+              <span className="text-lg leading-none">+</span>
+              <span>Create</span>
+            </button>
+            <DataTable columns={columns} data={transformedData} rowsPerPage={4} />
+          </div>
+        </div>
       )}
 
       <Modal
