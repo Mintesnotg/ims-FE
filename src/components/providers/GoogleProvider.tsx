@@ -8,7 +8,7 @@ interface GoogleProviderProps {
 }
 
 export default function GoogleProvider({ children }: GoogleProviderProps) {
-	const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+	const clientId = process.env.NEXT_PUBLIC_GOOGLE_STAGING_CLIENT_ID;
 
 	if (!clientId) {
 		// Render children without provider if client id is missing to avoid runtime crash

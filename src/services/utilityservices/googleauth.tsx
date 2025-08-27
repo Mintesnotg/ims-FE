@@ -3,8 +3,7 @@ import { GoogleLogin } from "@react-oauth/google";
 function GoogleButton({ setLoginError }: { setLoginError: (msg: string) => void }) {
  
   
-    const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
-    const prodclientId = process.env.NEXT_PUBLIC_GOOGLE_PROD_CLIENT_ID;
+    const clientId = process.env.NEXT_PUBLIC_GOOGLE_STAGING_CLIENT_ID;
 
     const handleSuccess = async (credential?: string | null) => {
         try {
@@ -29,13 +28,13 @@ function GoogleButton({ setLoginError }: { setLoginError: (msg: string) => void 
         }
     };
 
-    if (!prodclientId) {
+    if (!clientId) {
         return (
             <button
                 type="button"
                 disabled
                 className="w-full rounded-lg bg-gray-300 py-2 font-semibold text-gray-600 mt-2 cursor-not-allowed"
-                title="Google Sign-In requires prodclientId"
+                title="Google Sign-In requires clientId"
             >
                 Google Sign-In Unavailable
             </button>
