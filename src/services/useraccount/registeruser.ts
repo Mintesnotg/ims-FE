@@ -2,16 +2,13 @@ import { LoginResponse } from "types/response/userresponse/loginresponse";
 import { USER_ACCOUNT_ENDPOINTS } from "../../../lib/apiendpoints";
 import { RegisterValues } from "../../../lib/schemas/useraccount/registration";
 import { RegisterResponse } from "types/response/userresponse/registerresponse";
-import axios from 'axios';
+import { httpPost } from '../http';
 
 export async function registeruser(formdata: RegisterValues): Promise<{response: RegisterResponse}> {
   try {
-    const { data } = await axios.post<RegisterResponse>(
+    const data = await httpPost<RegisterResponse>(
       USER_ACCOUNT_ENDPOINTS.Register,
-      formdata,
-      {
-        headers: { 'Content-Type': 'application/json' },
-      }
+      formdata
     );
     return { response: data };
   } catch (error: any) {

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import GoogleProvider from "components/providers/GoogleProvider";
+import ToastProvider from "components/providers/ToastProvider";
 
 export const metadata: Metadata = {
   title: "IMS",
@@ -16,7 +17,9 @@ export default function RootLayout({
     <html lang="en">
       <body className="antialiased">
         <GoogleProvider>
-          {children}
+          <ToastProvider>
+            {children}
+          </ToastProvider>
         </GoogleProvider>
         {/* <li><Link href="/dashboard">Home</Link></li> */}
 

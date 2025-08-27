@@ -1,8 +1,9 @@
 import { redirect } from 'next/navigation';
-import axios, { AxiosError } from 'axios';
 import { MenuItem } from "types/response/menuresponse/menuitem";
 import { MENU_ENDPOINTS } from "../../lib/apiendpoints";
 import getAuthToken from "./utilityservices/accesstokenservice";
+import { httpGet } from './http';
+import { AppError } from '../lib/errors';
 
 // Constants
 
@@ -45,16 +46,16 @@ function transformMenuNode(node: RawMenuNode): MenuItem {
     };
 }
 
-
 async function fetchMenuData(token: string): Promise<MenuApiResponse> {
-    const response = await axios.get<MenuApiResponse>(MENU_ENDPOINTS.Menus, {
+    // Using shared http client
+    const data = await httpGet<MenuApiResponse>(MENU_ENDPOINTS.Menus, {
+        token,
         headers: {
             [ACCEPT_HEADER]: APPLICATION_JSON,
             [AUTHORIZATION_HEADER]: `Bearer ${token}`,
         },
     });
-    
-    return response.data;
+    return data;
 }
 
 /**
@@ -64,11 +65,11 @@ async function fetchMenuData(token: string): Promise<MenuApiResponse> {
  */
 function processMenuResponse(response: MenuApiResponse): MenuItem[] {
     const rootNode = response.data?.$values?.[0];
-    
+
     if (!rootNode?.children?.$values) {
         return [];
     }
-    
+
     return rootNode.children.$values.map(transformMenuNode);
 }
 
@@ -79,26 +80,22 @@ function processMenuResponse(response: MenuApiResponse): MenuItem[] {
  */
 export async function getSideMenus(): Promise<MenuItem[]> {
     try {
-  
         const token = await getAuthToken();
         const response = await fetchMenuData(token);
         return processMenuResponse(response);
     } catch (error) {
         console.error('Failed to fetch menu data:', error);
-        
-        // Handle specific error types
-        if (error instanceof AxiosError) {
-            if (error.response?.status === 401) {
-                redirect('/login');
-            }
-            throw new Error(`API request failed: ${error.message}`);
+
+        // Handle normalized AppError
+        if ((error as AppError)?.code === 'UNAUTHORIZED') {
+            redirect('/login');
         }
-        
+
         // For authentication errors, redirect to login
         if (error instanceof Error && error.message.includes('Authentication token not found')) {
             redirect('/login');
         }
-        
-        throw error;
+
+        throw error as Error;
     }
 }

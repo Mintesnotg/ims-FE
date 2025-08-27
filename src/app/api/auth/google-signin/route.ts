@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import axios from "axios";
 import { USER_ACCOUNT_ENDPOINTS } from "../../../../../lib/apiendpoints";
 import { LoginResponse } from "types/response/userresponse/loginresponse";
+import { httpPost } from "../../../../services/http";
 
 export async function POST(req: NextRequest) {
    debugger;
@@ -14,15 +14,13 @@ export async function POST(req: NextRequest) {
 			);
 		}
 
-		const { data } = await axios.post<LoginResponse>(
+		const data = await httpPost<LoginResponse>(
 			USER_ACCOUNT_ENDPOINTS.GoogleSignIn,
-			{ idToken },
-			{ headers: { "Content-Type": "application/json" } }
+			{ idToken }
 		);
 
 		if (data?.isSuccess && data?.data?.accessToken) {
 			 debugger;
-            
             const res = NextResponse.json(data, { status: 200 });
 			res.cookies.set("accessToken", data.data.accessToken, {
 				httpOnly: true,
