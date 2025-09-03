@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import DataTable from '../DataTable';
-import { GetAllRoles, GetRoleWithPrivilege, GetAllPrivileges, UpdateRole, DeleteRole } from '../../../services/useraccount/roleservice';
+import { GetAllRoles, GetRoleWithPrivilege, GetAllPrivileges, UpdateRole, DeleteRole, CreateRole } from '../../../services/useraccount/roleservice';
 import { Role } from '../../../types/response/roleresponse/roleresponse';
 import { UpdatedRolePayload } from '../../../types/response/roleresponse/updateroleresponse';
 import { PrivilegeItem } from '../../../types/response/roleresponse/privilegeresponse';
@@ -55,6 +55,7 @@ const UserRolesPage = () => {
   }, []);
 
   const handleCreate = async () => {
+    debugger;
     setRoleDetails(null);
     setEditFields({ roleName: '', description: '' });
     setAllPrivileges([]);
@@ -92,7 +93,7 @@ const UserRolesPage = () => {
       }
       if (assignedprevileges.isSuccess && assignedprevileges.data) {
         setRoleDetails(assignedprevileges.data);
-        setEditFields({ roleName: assignedprevileges.data.name, description: assignedprevileges.data.description });
+        setEditFields({ roleName: assignedprevileges.data.roleName, description: assignedprevileges.data.description });
         const currentAssigned = assignedprevileges.data.privileges?.$values?.map((p: PrivilegeItem) => p.id) ?? [];
         setAssignedIds(new Set(currentAssigned));
       } else {
@@ -194,6 +195,8 @@ const UserRolesPage = () => {
 
     setIsUpdating(true);
     try {
+      console.log(editFields.roleName)
+      debugger;
       const privilegeIds = Array.from(assignedIds);
       const response = await UpdateRole(currentRoleId, privilegeIds,editFields.roleName,editFields.description);
     
@@ -221,6 +224,54 @@ const UserRolesPage = () => {
       await Swal.fire({
         icon: 'error',
         title: 'Error updating role',
+        text: error instanceof Error ? error.message : 'Unknown error occurred',
+        confirmButtonColor: '#dc2626'
+      });
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const handleCreateSubmit = async () => {
+    debugger;
+    const trimmedRoleName = editFields.roleName.trim();
+    const trimmedDescription = editFields.description.trim();
+    if (!trimmedRoleName || !trimmedDescription) {
+      await Swal.fire({
+        icon: 'warning',
+        title: 'Missing required fields',
+        text: 'Role Name and Description are required.',
+        confirmButtonColor: '#1e3a8a'
+      });
+      return;
+    }
+    setIsUpdating(true);
+    try {
+      const privilegeIds = Array.from(assignedIds);
+      const response = await CreateRole(trimmedRoleName, trimmedDescription, privilegeIds);
+      if (response.isSuccess) {
+        await Swal.fire({
+          icon: 'success',
+          title: 'Created',
+          text: 'Role created successfully!',
+          confirmButtonColor: '#1e3a8a'
+        });
+        const updatedRoles = await fetchUserRoles();
+        setData(updatedRoles);
+        setIsModalOpen(false);
+      } else {
+        await Swal.fire({
+          icon: 'error',
+          title: 'Create failed',
+          text: response.message || 'Unknown error occurred',
+          confirmButtonColor: '#dc2626'
+        });
+      }
+    } catch (error) {
+      console.error('Error creating role:', error);
+      await Swal.fire({
+        icon: 'error',
+        title: 'Error creating role',
         text: error instanceof Error ? error.message : 'Unknown error occurred',
         confirmButtonColor: '#dc2626'
       });
@@ -305,15 +356,16 @@ const UserRolesPage = () => {
         </div>
       ) : (
         <div className="w-full flex flex-col items-center">
-          <div className="w-full relative mb-4 pt-12">
-            <button
-              onClick={handleCreate}
-              className="inline-flex items-center gap-2  px-3 py-2 rounded bg-green-600 text-white hover:bg-green-700 absolute right-0 top-0"
-              style={{ zIndex: 1 }}
-            >
-              <span className="text-lg leading-none">+</span>
-              <span>Create</span>
-            </button>
+          <div className="w-full mb-4">
+            <div className="w-full flex justify-end items-center align-sub mb-2">
+              <button
+                onClick={handleCreate}
+                className="inline-flex items-center gap-2 px-3 py-2 rounded bg-green-600 text-white hover:bg-green-700"
+              >
+                <span className="text-lg leading-none">+</span>
+                <span>Create</span>
+              </button>
+            </div>
             <DataTable columns={columns} data={transformedData} rowsPerPage={4} />
           </div>
         </div>
@@ -321,20 +373,20 @@ const UserRolesPage = () => {
 
       <Modal
         isOpen={isModalOpen}
-        title="Edit Role"
+        title={currentRoleId ? "Edit Role" : "Create Role"}
         onClose={handleCloseModal}
         footer={(
           <>
-            <button 
-              onClick={handleUpdate} 
+            <button
+              onClick={currentRoleId ? handleUpdate : handleCreateSubmit}
               disabled={isUpdating}
               className={`px-4 py-2 text-white rounded border ${
-                isUpdating 
-                  ? 'bg-gray-400 cursor-not-allowed' 
+                isUpdating
+                  ? 'bg-gray-400 cursor-not-allowed'
                   : 'bg-blue-800 hover:bg-blue-500'
               }`}
             >
-              {isUpdating ? 'Updating...' : 'Update'}
+              {isUpdating ? (currentRoleId ? 'Updating...' : 'Creating...') : (currentRoleId ? 'Update' : 'Create')}
             </button>
           </>
         )}
@@ -428,6 +480,7 @@ const UserRolesPage = () => {
           </div>
         )}
       </Modal>
+
     </div>
   );
 };

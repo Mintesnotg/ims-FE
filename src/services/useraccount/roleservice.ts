@@ -78,7 +78,7 @@ export async function UpdateRole(roleId: string, privilegeIds: string[], roleNam
         const token = await getAuthToken();
         const data = await httpPut<UpdateRoleResponse>(
             ROLE_ENDPOINT.UpdateRole,
-            { roleId, privilegeIds, name: roleName, description },
+            { roleId, privilegeIds, roleName: roleName, description },
             { token }
         );
         return data;
@@ -109,6 +109,31 @@ export async function DeleteRole(roleId: string): Promise<GetAllRolesResponse> {
         return data;
     } catch (error) {
         console.error('Error deleting role:', error);
+        if (error instanceof Error && error.message.includes(UNAUTHORIZED_TEXT)) {
+            window.location.href = '/login';
+            throw new Error('Unauthorized access');
+        }
+        if (error instanceof Error && error.message.includes('Authentication token not found')) {
+            window.location.href = '/login';
+            throw new Error('Authentication token not found');
+        }
+        throw error as Error;
+    }
+}
+
+// Create role with privileges
+export async function CreateRole(roleName: string, description: string, privilegeIds: string[]): Promise<UpdateRoleResponse> {
+    try {
+        const token = await getAuthToken();
+        const { httpPost } = await import('../http');
+        const data = await httpPost<UpdateRoleResponse>(
+            ROLE_ENDPOINT.CreateRole,
+            { roleName: roleName, description, privilegeIds },
+            { token }
+        );
+        return data;
+    } catch (error) {
+        console.error('Error creating role:', error);
         if (error instanceof Error && error.message.includes(UNAUTHORIZED_TEXT)) {
             window.location.href = '/login';
             throw new Error('Unauthorized access');

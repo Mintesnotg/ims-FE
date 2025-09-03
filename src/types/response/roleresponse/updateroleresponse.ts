@@ -13,7 +13,7 @@ export interface PrivilegeList {
 
 export interface UpdatedRolePayload {
   id: number;
-  name: string;
+  roleName: string;
   description: string;
   privileges: PrivilegeList;
 }
