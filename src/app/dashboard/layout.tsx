@@ -1,8 +1,8 @@
 // app/dashboard/layout.tsx
 import { ReactNode } from 'react';
-import { getSideMenus } from 'services/menuservice';
-import SideMenu from 'components/menu/SideMenu';
-import Logout from 'components/ui/user/logout';
+import { getSideMenus } from '@/services/menuservice';
+import SideMenu from '@/components/menu/SideMenu';
+import Logout from '@/components/ui/user/logout';
 
 export default async function DashboardLayout({ children }: { children: ReactNode }) {
   debugger;

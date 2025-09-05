@@ -342,8 +342,18 @@ const UserRolesPage = () => {
   };
 
   return (
-    <div className="p-8">
-      <h1 className="text-1xl text-center font-bold mb-4">User Roles</h1>
+    <div className="w-full">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold text-gray-800">User Roles</h2>
+        <button
+          onClick={handleCreate}
+          className="px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg hover:from-green-700 hover:to-green-800 transition-all duration-200 shadow-md hover:shadow-lg font-medium"
+        >
+          <i className="fas fa-plus mr-2"></i>
+          Create Role
+        </button>
+      </div>
+      
       {loading ? (
         <div className="space-y-3">
           <Skeleton className="h-8 w-40" variant="text" />
@@ -355,20 +365,7 @@ const UserRolesPage = () => {
           </div>
         </div>
       ) : (
-        <div className="w-full flex flex-col items-center">
-          <div className="w-full mb-4">
-            <div className="w-full flex justify-end items-center align-sub mb-2">
-              <button
-                onClick={handleCreate}
-                className="inline-flex items-center gap-2 px-3 py-2 rounded bg-green-600 text-white hover:bg-green-700"
-              >
-                <span className="text-lg leading-none">+</span>
-                <span>Create</span>
-              </button>
-            </div>
-            <DataTable columns={columns} data={transformedData} rowsPerPage={4} />
-          </div>
-        </div>
+        <DataTable columns={columns} data={transformedData} rowsPerPage={4} />
       )}
 
       <Modal

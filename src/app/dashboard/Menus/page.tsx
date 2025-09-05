@@ -1,11 +1,12 @@
-import React from 'react'
 
-function page() {
+import React from 'react';
+import MenuTable from "@/components/menu/MenuTable";
+
+export default function MenusPage() {
   return (
-    <div>
-       <h1 className='text-center'>Menus</h1>
+    <div className="p-4">
+      <MenuTable />
     </div>
-  )
+  );
 }
 
-export default page

@@ -1,12 +1,12 @@
 import React from 'react'
 import { Metadata } from 'next';
-import Loginform from 'components/ui/user/loginform';    
-import { authenticate } from 'services/useraccount/auth';
+import Loginform from '@/components/ui/user/loginform';    
+import { authenticate } from '@/services/useraccount/auth';
 
 import { LoginFormValues } from '../../../lib/schemas/useraccount/loginschema';
-import { LoginResponse } from 'types/response/userresponse/loginresponse';
+import { LoginResponse } from '@/types/response/userresponse/loginresponse';
 import { cookies } from 'next/headers';
-import { OperationStatus } from 'types/enums/systemenums';
+import { OperationStatus } from '@/types/enums/systemenums';
 
 export const metadata: Metadata = { title: 'Sign in' };
 

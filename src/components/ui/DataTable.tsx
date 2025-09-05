@@ -9,20 +9,42 @@ interface DataTableProps {
   columns: Column[];
   data: Record<string, string | number | boolean | React.ReactElement>[];
   rowsPerPage?: number;
+  onPageChange?: (page: number) => void;
+  currentPage?: number;
+  totalPages?: number;
+  serverSidePagination?: boolean;
 }
 
-const DataTable: React.FC<DataTableProps> = ({ columns, data, rowsPerPage = 4 }) => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = Math.ceil(data.length / rowsPerPage);
+const DataTable: React.FC<DataTableProps> = ({ 
+  columns, 
+  data, 
+  rowsPerPage = 5, 
+  onPageChange,
+  currentPage: externalCurrentPage,
+  totalPages: externalTotalPages,
+  serverSidePagination = false
+}) => {
+  const [internalCurrentPage, setInternalCurrentPage] = useState(1);
+  
+  // Use external pagination if server-side, otherwise use internal
+  const currentPage = serverSidePagination ? (externalCurrentPage || 1) : internalCurrentPage;
+  const totalPages = serverSidePagination ? (externalTotalPages || 1) : Math.ceil(data.length / rowsPerPage);
 
   const handlePageChange = (page: number) => {
     if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
+      if (serverSidePagination && onPageChange) {
+        onPageChange(page);
+      } else {
+        setInternalCurrentPage(page);
+      }
     }
   };
 
-  const startIdx = (currentPage - 1) * rowsPerPage;
-  const paginatedData = data.slice(startIdx, startIdx + rowsPerPage);
+  // For server-side pagination, use data as-is. For client-side, slice the data
+  const paginatedData = serverSidePagination ? data : (() => {
+    const startIdx = (currentPage - 1) * rowsPerPage;
+    return data.slice(startIdx, startIdx + rowsPerPage);
+  })();
 
   return (
     <div className="flex sm:justify-center w-full">

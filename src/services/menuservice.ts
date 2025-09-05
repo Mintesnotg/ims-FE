@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation';
-import { MenuItem } from "types/response/menuresponse/menuitem";
+import { MenuItem } from "@/types/response/menuresponse/menuitem";
 import { MENU_ENDPOINTS } from "../../lib/apiendpoints";
 import getAuthToken from "./utilityservices/accesstokenservice";
 import { httpGet } from './http';

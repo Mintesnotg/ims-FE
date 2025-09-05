@@ -1,14 +1,14 @@
 
-import Posts from 'components/ui/Posts';
-import UserRolesPage from 'components/ui/user/userroles';
 import React from 'react'
+import { Metadata } from 'next';
+import UserRolesPage from '@/components/ui/user/userroles';
 
 const page = async () => {
 
 
 
     return (
-        <div className='sm:w-full '>
+        <div className='p-4 '>
             <UserRolesPage />
 
         </div>

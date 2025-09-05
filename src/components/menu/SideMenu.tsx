@@ -11,8 +11,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { MenuItem } from "types/response/menuresponse/menuitem";
-import HamburgerButton from 'components/ui/HamburgerButton';
+import { MenuItem } from "@/types/response/menuresponse/menuitem";
+import HamburgerButton from '@/components/ui/HamburgerButton';
 
 interface SideMenuProps {
   items: MenuItem[];

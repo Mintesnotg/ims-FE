@@ -10,7 +10,12 @@ export const USER_ACCOUNT_ENDPOINTS = {
 }
 
 export const MENU_ENDPOINTS ={
-    Menus : `${BASE_URL}/api/v1/MenuBuilder/Menus`
+    Menus : `${BASE_URL}/api/v1/MenuBuilder/Menus`,
+    GetAllMenus: `${BASE_URL}/api/v1/Menu/GetAllMenu`,
+    GetAllParentMenus: `${BASE_URL}/api/v1/Menu/GetAllMenus`,
+    CreateMenu: `${BASE_URL}/api/v1/Menu/CreateMenu`,
+    UpdateMenu: `${BASE_URL}/api/v1/Menu/UpdateMenu`,
+    DeleteMenu: `${BASE_URL}/api/v1/Menu/DeleteMenu`
 }
 
 export const ROLE_ENDPOINT = {

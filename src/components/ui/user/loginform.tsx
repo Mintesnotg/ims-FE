@@ -4,11 +4,11 @@
 import { useForm } from "react-hook-form";
 import { LoginFormValues, loginSchema } from "../../../../lib/schemas/useraccount/loginschema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { LoginResponse } from "types/response/userresponse/loginresponse";
+import { LoginResponse } from "@/types/response/userresponse/loginresponse";
 import { useState } from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import GoogleButton from "services/utilityservices/googleauth";
+import GoogleButton from "@/services/utilityservices/googleauth";
 
 type Props = {
     action: (fd: FormData) => Promise<{ response?: LoginResponse  | undefined }>;
