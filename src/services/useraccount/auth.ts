@@ -1,4 +1,4 @@
-import { LoginResponse } from "types/response/userresponse/loginresponse";
+import { LoginResponse } from "@/types/response/userresponse/loginresponse";
 import { USER_ACCOUNT_ENDPOINTS } from "../../../lib/apiendpoints";
 import { LoginFormValues } from "../../../lib/schemas/useraccount/loginschema";
 import { httpPost } from "../http";

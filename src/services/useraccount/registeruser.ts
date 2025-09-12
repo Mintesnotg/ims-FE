@@ -1,7 +1,7 @@
-import { LoginResponse } from "types/response/userresponse/loginresponse";
+import { LoginResponse } from "@/types/response/userresponse/loginresponse";
 import { USER_ACCOUNT_ENDPOINTS } from "../../../lib/apiendpoints";
 import { RegisterValues } from "../../../lib/schemas/useraccount/registration";
-import { RegisterResponse } from "types/response/userresponse/registerresponse";
+import { RegisterResponse } from "@/types/response/userresponse/registerresponse";
 import { httpPost } from '../http';
 
 export async function registeruser(formdata: RegisterValues): Promise<{response: RegisterResponse}> {

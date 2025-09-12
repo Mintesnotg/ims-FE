@@ -1,4 +1,4 @@
-import { OperationalStatus } from "types/opreationalstatus";
+import { OperationalStatus } from "@/types/opreationalstatus";
 
 export interface RegisterPayload {
   registerresponse?: string;
