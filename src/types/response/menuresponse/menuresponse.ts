@@ -38,6 +38,6 @@ export interface MenuRequest {
   parentId?: string | null;
   url?: string | null;
   icon?: string | null;
-  privileges?: string | null;
+  Privilege?: string | null;
   order?: number | null;
 }

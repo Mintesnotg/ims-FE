@@ -40,6 +40,8 @@ export async function getAllMenus(params: MenuListParams = {}): Promise<Paginati
  * Creates a new menu
  */
 export async function createMenu(menuData: MenuRequest): Promise<MenuResponse> {
+ 
+   debugger;
   try {
     const token = await getAuthToken();
     
@@ -66,6 +68,7 @@ export async function createMenu(menuData: MenuRequest): Promise<MenuResponse> {
  */
 export async function updateMenu(id: string, menuData: MenuRequest): Promise<MenuResponse> {
   try {
+    debugger;
     const token = await getAuthToken();
     
     const options: HttpOptions = {

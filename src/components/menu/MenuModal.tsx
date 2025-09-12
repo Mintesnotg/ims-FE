@@ -19,7 +19,7 @@ export default function MenuModal({ isOpen, onClose, onSuccess, menu, allMenus }
     parentId: null,
     url: '',
     icon: '',
-    privileges: '',
+    Privilege: '',
     order: null,
   });
   const [loading, setLoading] = useState(false);
@@ -57,7 +57,7 @@ export default function MenuModal({ isOpen, onClose, onSuccess, menu, allMenus }
         parentId: menu.parentId,
         url: menu.url || '',
         icon: menu.icon || '',
-        privileges: menu.privilege || '',
+        Privilege: menu.privilege || '',
         order: menu.order,
       });
       // Set the search term to show the selected parent menu name
@@ -69,7 +69,7 @@ export default function MenuModal({ isOpen, onClose, onSuccess, menu, allMenus }
         parentId: null,
         url: '',
         icon: '',
-        privileges: '',
+        Privilege: '',
         order: null,
       });
       setParentSearchTerm('');
@@ -82,6 +82,7 @@ export default function MenuModal({ isOpen, onClose, onSuccess, menu, allMenus }
 
     try {
       if (isEdit && menu) {
+        debugger;
         await updateMenu(menu.id, formData);
         notify.success('Menu updated successfully');
       } else {
@@ -249,14 +250,14 @@ export default function MenuModal({ isOpen, onClose, onSuccess, menu, allMenus }
         </div>
 
         <div>
-          <label htmlFor="privileges" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="Privilege" className="block text-sm font-medium text-gray-700 mb-1">
             Privileges
           </label>
           <input
             type="text"
-            id="privileges"
-            name="privileges"
-            value={formData.privileges || ''}
+            id="Privilege"
+            name="Privilege"
+            value={formData.Privilege || ''}
             onChange={handleInputChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="Enter required privileges"
