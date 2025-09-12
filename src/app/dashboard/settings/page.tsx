@@ -1,17 +1,11 @@
-import Posts from "components/ui/Posts";
+import React from 'react'
 
-// app/dashboard/settings/page.tsx
-export default async function DashboardSettings() {
-
-
-  const res = await fetch('http://jsonplaceholder.typicode.com/users', {
-    cache: 'no-store',
-  })
-  const posts = await res.json();
-
+const page = () => {
   return (
-    
-      <Posts posts={posts} />
-    
-  );
+    <div>
+      <h1>Page</h1>
+    </div>
+  )
 }
+
+export default page
