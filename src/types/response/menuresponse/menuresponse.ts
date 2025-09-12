@@ -24,14 +24,14 @@ export interface Pagination<T> {
   };
 }
 
-export interface MenuApiResponse extends OperationalStatus<Pagination<MenuResponse>> {}
+export type MenuApiResponse = OperationalStatus<Pagination<MenuResponse>>;
 
 export interface ParentMenuData {
   $id: string;
   $values: MenuResponse[];
 }
 
-export interface ParentMenuApiResponse extends OperationalStatus<ParentMenuData> {}
+export type ParentMenuApiResponse = OperationalStatus<ParentMenuData>;
 
 export interface MenuRequest {
   name: string;
