@@ -1,7 +1,7 @@
-import Registration from "components/ui/user/registration";
-import { RegisterResponse } from "types/response/userresponse/registerresponse";
+import Registration from "@/components/ui/user/registration";
+import { RegisterResponse } from "@/types/response/userresponse/registerresponse";
 import { RegisterValues } from "../../../lib/schemas/useraccount/registration";
-import { registeruser } from "services/useraccount/registeruser";
+import { registeruser } from "@/services/useraccount/registeruser";
 
 
 export default function Register() {
