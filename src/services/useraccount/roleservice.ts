@@ -1,7 +1,7 @@
 
 import { ROLE_ENDPOINT, PRIVILEGE_ENDPOINTS } from '../../../lib/apiendpoints';
 import { GetAllRolesResponse } from '../../types/response/roleresponse/roleresponse';
-import getAuthToken from 'services/utilityservices/accesstokenservice';
+import getAuthToken from '@/services/utilityservices/accesstokenservice';
 import { UpdateRoleResponse } from '../../types/response/roleresponse/updateroleresponse';
 import { AllPrivilegesResponse } from '../../types/response/roleresponse/privilegeresponse';
 import { httpGet, httpPut, httpDelete } from '../http';

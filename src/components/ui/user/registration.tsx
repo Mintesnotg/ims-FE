@@ -4,7 +4,7 @@ import React from 'react'
 import { useForm } from 'react-hook-form';
 import { registerSchema, RegisterValues } from '../../../../lib/schemas/useraccount/registration';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { RegisterResponse } from 'types/response/userresponse/registerresponse';
+import { RegisterResponse } from '@/types/response/userresponse/registerresponse';
 import { Toaster, toast } from 'react-hot-toast';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
