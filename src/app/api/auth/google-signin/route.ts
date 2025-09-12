@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { USER_ACCOUNT_ENDPOINTS } from "../../../../../lib/apiendpoints";
-import { LoginResponse } from "types/response/userresponse/loginresponse";
+import { LoginResponse } from "@/types/response/userresponse/loginresponse";
 import { httpPost } from "../../../../services/http";
 
 export async function POST(req: NextRequest) {
