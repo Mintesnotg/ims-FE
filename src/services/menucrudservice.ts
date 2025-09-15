@@ -93,15 +93,19 @@ export async function updateMenu(id: string, menuData: MenuRequest): Promise<Men
  * Deletes a menu
  */
 export async function deleteMenu(id: string): Promise<void> {
+  debugger;
   try {
     const token = await getAuthToken();
     
     const options: HttpOptions = {
       token,
+      // Ensure the id also appears in the URL to satisfy APIs expecting query string
       params: { id }
     };
 
-    const response = await httpDelete<MenuApiResponse>(MENU_ENDPOINTS.DeleteMenu, options);
+    // Append id to URL defensively for backends that require query in URL
+    const url = `${MENU_ENDPOINTS.DeleteMenu}?id=${id}`;
+    const response = await httpDelete<MenuApiResponse>(url, options);
     
     if (!response.isSuccess) {
       throw new Error(response.message || 'Failed to delete menu');

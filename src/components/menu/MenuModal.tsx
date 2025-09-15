@@ -121,10 +121,10 @@ export default function MenuModal({ isOpen, onClose, onSuccess, menu, allMenus }
 
   const selectedParentMenu = allMenusForParent.find(menu => menu.id === formData.parentId);
 
-  const handleParentSelect = (menuId: string | null) => {
+  const handleParentSelect = (menuId: string | null, menuName?: string) => {
     setFormData(prev => ({ ...prev, parentId: menuId }));
+    setParentSearchTerm(menuId ? (menuName ?? (allMenusForParent.find(m => m.id === menuId)?.name || '')) : '');
     setShowParentDropdown(false);
-    setParentSearchTerm(selectedParentMenu?.name || '');
   };
 
   const handleParentSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -196,7 +196,7 @@ export default function MenuModal({ isOpen, onClose, onSuccess, menu, allMenus }
               <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto">
                 <div
                   className="px-3 py-2 cursor-pointer hover:bg-gray-100 border-b"
-                  onClick={() => handleParentSelect(null)}
+                  onMouseDown={() => handleParentSelect(null, '')}
                 >
                   <span className="text-gray-500">No Parent (Root Menu)</span>
                 </div>
@@ -204,7 +204,7 @@ export default function MenuModal({ isOpen, onClose, onSuccess, menu, allMenus }
                   <div
                     key={parentMenu.id}
                     className="px-3 py-2 cursor-pointer hover:bg-gray-100"
-                    onClick={() => handleParentSelect(parentMenu.id)}
+                    onMouseDown={() => handleParentSelect(parentMenu.id, parentMenu.name)}
                   >
                     {parentMenu.name}
                   </div>

@@ -59,6 +59,7 @@ export default function MenuTable({ refreshTrigger = 0 }: MenuTableProps) {
   };
 
   const handleDelete = async (id: string) => {
+    debugger;
     if (window.confirm('Are you sure you want to delete this menu?')) {
       try {
         await deleteMenu(id);
@@ -106,7 +107,7 @@ export default function MenuTable({ refreshTrigger = 0 }: MenuTableProps) {
         </button>
         <button
           className="px-2 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700"
-          onClick={() => handleDelete(menu.id)}
+          onMouseDown={() => handleDelete(menu.id)}
         >
           Delete
         </button>

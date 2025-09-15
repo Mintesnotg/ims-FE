@@ -22,6 +22,7 @@ export function createAppError(message: string, code: AppErrorCode, status?: num
 }
 
 export function mapHttpStatusToAppError(status?: number, fallbackMessage?: string): AppError {
+   debugger;
     switch (status) {
         case 401:
             return createAppError('You are not authorized. Please login again.', 'UNAUTHORIZED', status);
